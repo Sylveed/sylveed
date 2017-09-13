@@ -10,6 +10,8 @@ namespace Sylveed.Lang.Syntactics
 	{
 		readonly Expression[] inners;
 
+		public IEnumerable<Expression> InnerExpressions { get { return inners; } }
+
 		public SourceBlock(IEnumerable<Expression> inners)
 		{
 			this.inners = inners.ToArray();

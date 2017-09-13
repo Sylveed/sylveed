@@ -8,6 +8,5 @@ namespace Sylveed.Lang
 {
 	public abstract class Expression
 	{
-
 	}
 }

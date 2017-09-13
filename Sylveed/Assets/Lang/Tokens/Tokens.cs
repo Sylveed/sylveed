@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Sylveed.Lang.Helpers;
 
 namespace Sylveed.Lang.Tokens
 {
@@ -25,44 +25,68 @@ namespace Sylveed.Lang.Tokens
 
 	public static class PrimitiveTokenDefine
 	{
+		readonly static Dictionary<RuntimeTypeHandle, Func<Token>> ConstructorPool =
+			new Dictionary<RuntimeTypeHandle, Func<Token>>();
+
 		readonly static Dictionary<string, Func<PrimitiveToken>> GeneratorMap = new Dictionary<string, Func<PrimitiveToken>>();
 		readonly static Dictionary<string, Func<SymbolToken>> SymbolGeneratorMap = new Dictionary<string, Func<SymbolToken>>();
 
 		static PrimitiveTokenDefine()
 		{
-			GeneratorMap.Add(new ClassToken().Value, () => new ClassToken());
-			GeneratorMap.Add(new StaticToken().Value, () => new StaticToken());
-			GeneratorMap.Add(new PublicToken().Value, () => new PublicToken());
-			GeneratorMap.Add(new PrivateToken().Value, () => new PrivateToken());
-			GeneratorMap.Add(new IfToken().Value, () => new IfToken());
-			GeneratorMap.Add(new WhileToken().Value, () => new WhileToken());
-			GeneratorMap.Add(new ForToken().Value, () => new ForToken());
-			GeneratorMap.Add(new NewToken().Value, () => new NewToken());
-			GeneratorMap.Add(new OpeningCurlyBracketToken().Value, () => new OpeningCurlyBracketToken());
-			GeneratorMap.Add(new ClosingCurlyBracketToken().Value, () => new ClosingCurlyBracketToken());
-			GeneratorMap.Add(new OpeningParenthesisToken().Value, () => new OpeningParenthesisToken());
-			GeneratorMap.Add(new ClosingParenthesisToken().Value, () => new ClosingParenthesisToken());
+			foreach (var type in GetTokenTypes())
+				AddGeneratorMap(type);
+		}
 
-			GeneratorMap.Add(new SubstitutionToken().Value, () => new SubstitutionToken());
-			GeneratorMap.Add(new EqualsToken().Value, () => new EqualsToken());
-			GeneratorMap.Add(new ColonToken().Value, () => new ColonToken());
-			GeneratorMap.Add(new SemicolonToken().Value, () => new SemicolonToken());
-			GeneratorMap.Add(new CommaToken().Value, () => new CommaToken());
-			GeneratorMap.Add(new DotToken().Value, () => new DotToken());
-			GeneratorMap.Add(new PlusToken().Value, () => new PlusToken());
+		static IEnumerable<Type> GetTokenTypes()
+		{
+			yield return typeof(ClassToken);
+			yield return typeof(StaticToken);
+			yield return typeof(PublicToken);
+			yield return typeof(PrivateToken);
+			yield return typeof(IfToken);
+			yield return typeof(WhileToken);
+			yield return typeof(ForToken);
+			yield return typeof(NewToken);
 
-			SymbolGeneratorMap.Add(new OpeningCurlyBracketToken().Value, () => new OpeningCurlyBracketToken());
-			SymbolGeneratorMap.Add(new ClosingCurlyBracketToken().Value, () => new ClosingCurlyBracketToken());
-			SymbolGeneratorMap.Add(new OpeningParenthesisToken().Value, () => new OpeningParenthesisToken());
-			SymbolGeneratorMap.Add(new ClosingParenthesisToken().Value, () => new ClosingParenthesisToken());
+			yield return typeof(OpeningCurlyBracketToken);
+			yield return typeof(ClosingCurlyBracketToken);
+			yield return typeof(OpeningParenthesisToken);
+			yield return typeof(ClosingParenthesisToken);
 
-			SymbolGeneratorMap.Add(new SubstitutionToken().Value, () => new SubstitutionToken());
-			SymbolGeneratorMap.Add(new EqualsToken().Value, () => new EqualsToken());
-			SymbolGeneratorMap.Add(new ColonToken().Value, () => new ColonToken());
-			SymbolGeneratorMap.Add(new SemicolonToken().Value, () => new SemicolonToken());
-			SymbolGeneratorMap.Add(new CommaToken().Value, () => new CommaToken());
-			SymbolGeneratorMap.Add(new DotToken().Value, () => new DotToken());
-			SymbolGeneratorMap.Add(new PlusToken().Value, () => new PlusToken());
+			yield return typeof(EqualToken);
+			yield return typeof(ColonToken);
+			yield return typeof(SemicolonToken);
+			yield return typeof(CommaToken);
+			yield return typeof(DotToken);
+			yield return typeof(PlusToken);
+		}
+		
+		static void AddGeneratorMap(Type type)
+		{
+			var ctor = GetTokenConstructor(type);
+
+			var key = ctor().Value;
+
+			GeneratorMap.Add(key, () => (PrimitiveToken)ctor());
+
+			if (typeof(SymbolToken).IsAssignableFrom(type))
+			{
+				SymbolGeneratorMap.Add(key, () => (SymbolToken)ctor());
+			}
+		}
+
+		static Func<Token> GetTokenConstructor(Type type)
+		{
+			Func<Token> ctor;
+			if (ConstructorPool.TryGetValue(type.TypeHandle, out ctor))
+				return ctor;
+
+			var sourceCtor = ConstructorCreator.Create(type);
+			ctor = () => (Token)sourceCtor();
+
+			ConstructorPool.Add(type.TypeHandle, ctor);
+
+			return ctor;
 		}
 
 		public static PrimitiveToken GetValueOrNull(string key)
@@ -100,6 +124,11 @@ namespace Sylveed.Lang.Tokens
 	{
 	}
 
+	public interface IModifierToken
+	{
+
+	}
+
 	public class ClassToken : PrimitiveKeywordToken
 	{
 		const string value = "class";
@@ -107,21 +136,21 @@ namespace Sylveed.Lang.Tokens
 		public override string Value { get { return value; } }
 	}
 
-	public class StaticToken : PrimitiveKeywordToken
+	public class StaticToken : PrimitiveKeywordToken, IModifierToken
 	{
 		const string value = "static";
 
 		public override string Value { get { return value; } }
 	}
 
-	public class PublicToken : PrimitiveKeywordToken
+	public class PublicToken : PrimitiveKeywordToken, IModifierToken
 	{
 		const string value = "public";
 
 		public override string Value { get { return value; } }
 	}
 
-	public class PrivateToken : PrimitiveKeywordToken
+	public class PrivateToken : PrimitiveKeywordToken, IModifierToken
 	{
 		const string value = "private";
 
@@ -149,7 +178,7 @@ namespace Sylveed.Lang.Tokens
 		public override string Value { get { return value; } }
 	}
 
-	public class NewToken : PrimitiveKeywordToken
+	public class NewToken : PrimitiveKeywordToken, IModifierToken
 	{
 		const string value = "new";
 
@@ -215,16 +244,9 @@ namespace Sylveed.Lang.Tokens
 		public override BracketType BracketType { get { return BracketType.Parenthesis; } }
 	}
 
-	public class SubstitutionToken : SymbolToken
+	public class EqualToken : SymbolToken
 	{
 		const string value = "=";
-
-		public override string Value { get { return value; } }
-	}
-
-	public class EqualsToken : SymbolToken
-	{
-		const string value = "==";
 
 		public override string Value { get { return value; } }
 	}

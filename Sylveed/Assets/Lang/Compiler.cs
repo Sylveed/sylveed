@@ -7,6 +7,6 @@ namespace Sylveed.Lang
 {
 	public class Compiler
 	{
-		
+		public void Compile() { }
 	}
 }
