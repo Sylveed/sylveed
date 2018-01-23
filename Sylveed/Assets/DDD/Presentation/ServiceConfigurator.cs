@@ -26,7 +26,7 @@ namespace Sylveed.DDD.Presentation
 		{
 			get
 			{
-				return new ContainerConfiguration()
+				return new ObjectResolver()
 					.AddFactory<SPerson>()
 					.Add<Tuple<SPersonId, string>>(arg =>
 					{

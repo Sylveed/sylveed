@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Sylveed.DDD.Presentation.Helpers
 {
-	public class ContainerConfigureException : Exception
+	public class ObjectResolverException : Exception
 	{
-		public ContainerConfigureException(string message) : base(message)
+		public ObjectResolverException(string message) : base(message)
 		{
 		}
 	}

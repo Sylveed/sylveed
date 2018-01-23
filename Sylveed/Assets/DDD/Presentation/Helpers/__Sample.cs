@@ -13,21 +13,69 @@ namespace Sylveed.DDD.Presentation.Helpers
 {
 	static class Sample
 	{
-		static void Main()
-		{
-			var repository1 = new RepositoryBase<int, Model1>(x => x.Id);
-			var repository2 = new RepositoryBase<string, Model2>(x => x.Id);
-			
-			var container = new Container(new ContainerConfiguration()
-				.AddFactory<Model1>()
-				.Add((int i) => new Model1())
-				.Add((string s) => new Model1())
-				.Map()
-				.AddRepository(repository1)
-				.AddRepository(repository2));
-		}
+        class SampleView
+        {
+            [Inject]
+            readonly SampleService service;
 
-		class Model1
+            void Awake()
+            {
+                ServiceResolver.ResolveMembers(this);
+
+                var model = service.GetWithSubId("test");
+            }
+        }
+
+        static class ServiceResolver
+        {
+            static ObjectResolver s_resolver;
+
+            static ServiceResolver()
+            {
+                var inner = new ObjectResolver()
+                    .Register<IModel1Factory>(new SampleModel1Factory())
+                    .Register(new SampleRepository());
+
+                s_resolver = new ObjectResolver()
+                    .Register(inner.ResolveMembers(new SampleService()));
+            }
+
+            public static T ResolveMembers<T>(T target)
+            {
+                s_resolver.ResolveMembers(target);
+                return target;
+            }
+        }
+
+        class SampleRepository : RepositoryBase<int, Model1>
+        {
+            readonly IRepositoryIndexer<string, Model1> subIdIndexer;
+
+            public SampleRepository() : base(model => model.Id)
+            {
+                subIdIndexer = Index(x => x.SubId);
+            }
+
+            public IEnumerable<Model1> FindWithSubId(string subId)
+            {
+                return subIdIndexer.Get(subId);
+            }
+        }
+
+        interface IModel1Factory
+        {
+            Model1 Create(int id);
+        }
+
+        class SampleModel1Factory : IModel1Factory
+        {
+            public Model1 Create(int id)
+            {
+                return new Model1();
+            }
+        }
+
+        class Model1
 		{
 			public int Id { get; private set; }
 			public string SubId { get; private set; }
@@ -38,39 +86,32 @@ namespace Sylveed.DDD.Presentation.Helpers
 			public string Id { get; private set; }
 		}
 
-		class Container
+		class SampleService
 		{
-			readonly RepositoryBase<int, Model1> repository1;
-			readonly RepositoryBase<string, Model2> repository2;
-			readonly Factory<Model1, int> factory1;
-			readonly Factory<Model1, string> factory2;
+            [Inject]
+			readonly SampleRepository repository;
+            [Inject]
+            readonly IModel1Factory factory;
 
-			readonly IRepositoryIndexer<string, Model1> subIdModel1Indexer;
+            [Inject]
+            void Initialze()
+            {
 
-			public Container(IContainerConfiguration config)
+            }
+
+            public Model1 Get(int id)
 			{
-				config.Configure(this);
-
-				subIdModel1Indexer = repository1.Index(x => x.SubId);
+				return repository.Get(id);
 			}
 
-			public Model1 Get(int id)
+			public IEnumerable<Model1> GetWithSubId(string subId)
 			{
-				return repository1.Get(id);
-			}
-
-			public Model1 GetWithSubId(string subId)
-			{
-				return subIdModel1Indexer.Get(subId);
-			}
+                return repository.FindWithSubId(subId);
+            }
 
 			public Model1 Create(int id)
 			{
-				var obj = factory1.Create(id);
-
-				repository1.Add(obj);
-
-				return obj;
+                return repository.Add(factory.Create(id));
 			}
 		}
 	}

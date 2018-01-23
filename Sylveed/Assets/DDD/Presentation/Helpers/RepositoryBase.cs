@@ -53,11 +53,6 @@ namespace Sylveed.DDD.Presentation.Helpers
 			return map.ContainsKey(key);
 		}
 
-		public IRepositoryIndexer<TSubKey, TValue> Index<TSubKey>(Func<TValue, TSubKey> keySelector)
-		{
-			return new RepositoryIndexer<TSubKey>(this, keySelector);
-		}
-
 		public TValue Add(TValue item)
 		{
 			var key = primaryKeySelector(item);
@@ -89,82 +84,107 @@ namespace Sylveed.DDD.Presentation.Helpers
 			map.Clear();
 
 			cleared.OnNext(Unit.Default);
-		}
+        }
 
-		class RepositoryIndexer<TSubKey> : IRepositoryIndexer<TSubKey, TValue>
-		{
-			readonly Dictionary<TSubKey, TKey> keyMap = new Dictionary<TSubKey, TKey>();
+        protected IRepositoryIndexer<TSubKey, TValue> Index<TSubKey>(Func<TValue, TSubKey> keySelector)
+        {
+            return new Indexer<TSubKey>(this, keySelector);
+        }
+        
+        class Indexer<TSubKey> : IRepositoryIndexer<TSubKey, TValue>
+        {
+            readonly Dictionary<TSubKey, HashSet<TKey>> keyMap = new Dictionary<TSubKey, HashSet<TKey>>();
 
-			readonly RepositoryBase<TKey, TValue> parent;
-			readonly Func<TValue, TSubKey> keySelector;
+            readonly RepositoryBase<TKey, TValue> parent;
+            readonly Func<TValue, TSubKey> keySelector;
 
-			public RepositoryIndexer(RepositoryBase<TKey, TValue> parent, Func<TValue, TSubKey> keySelector)
-			{
-				this.parent = parent;
-				this.keySelector = keySelector;
+            public Indexer(RepositoryBase<TKey, TValue> parent, Func<TValue, TSubKey> keySelector)
+            {
+                this.parent = parent;
+                this.keySelector = keySelector;
 
-				MakeIndex();
-			}
+                MakeIndex();
+            }
 
-			void MakeIndex()
-			{
-				foreach (var key in parent.Keys)
-				{
-					var value = parent.Get(key);
+            void MakeIndex()
+            {
+                foreach (var key in parent.Keys)
+                {
+                    Add(key);
+                }
 
-					var subKey = keySelector(value);
+                parent.added.Subscribe(key =>
+                {
+                    Add(key);
+                });
 
-					keyMap.Add(subKey, key);
-				}
+                parent.removed.Subscribe(item =>
+                {
+                    Remove(item);
+                });
 
-				parent.added.Subscribe(key =>
-				{
-					var value = parent.Get(key);
+                parent.cleared.Subscribe(_ =>
+                {
+                    keyMap.Clear();
+                });
+            }
 
-					var subKey = keySelector(value);
+            void Remove(TValue item)
+            {
+                var key = parent.primaryKeySelector(item);
+                var subKey = keySelector(item);
+                var keys = keyMap[subKey];
 
-					keyMap.Add(subKey, key);
-				});
+                keys.Remove(key);
+                if (keys.Count == 0)
+                {
+                    keyMap.Remove(subKey);
+                }
+            }
 
-				parent.removed.Subscribe(item =>
-				{
-					var subKey = keySelector(item);
+            void Add(TKey key)
+            {
+                var value = parent.Get(key);
 
-					keyMap.Remove(subKey);
-				});
+                var subKey = keySelector(value);
 
-				parent.cleared.Subscribe(_ =>
-				{
-					keyMap.Clear();
-				});
-			}
+                HashSet<TKey> keys;
+                if (!keyMap.TryGetValue(subKey, out keys))
+                {
+                    keys = new HashSet<TKey>();
+                    keyMap.Add(subKey, keys);
+                }
+                keys.Add(key);
+            }
 
-			public TValue Get(TSubKey key)
-			{
-				return parent.Get(GetPrimaryKey(key));
-			}
+            public IEnumerable<TValue> Get(TSubKey key)
+            {
+                HashSet<TKey> primaryKeys;
+                if (!keyMap.TryGetValue(key, out primaryKeys))
+                    throw new InvalidOperationException($"{key} not found.");
 
-			public bool Contains(TSubKey key)
-			{
-				return keyMap.ContainsKey(key);
-			}
+                foreach (var x in primaryKeys)
+                    yield return parent.Get(x);
+            }
 
-			public bool Remove(TSubKey key)
-			{
-				return parent.Remove(GetPrimaryKey(key));
-			}
+            public bool Contains(TSubKey key)
+            {
+                return keyMap.ContainsKey(key);
+            }
 
-			TKey GetPrimaryKey(TSubKey subKey)
-			{
-				try
-				{
-					return keyMap[subKey];
-				}
-				catch (KeyNotFoundException)
-				{
-					throw new InvalidOperationException($"{subKey} not found.");
-				}
-			}
-		}
-	}
+            public bool Remove(TSubKey key)
+            {
+                HashSet<TKey> primaryKeys;
+                if (!keyMap.TryGetValue(key, out primaryKeys))
+                    return false;
+
+                foreach(var x in primaryKeys.ToArray())
+                {
+                    parent.Remove(x);
+                }
+
+                return true;
+            }
+        }
+    }
 }
