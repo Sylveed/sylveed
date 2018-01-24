@@ -16,25 +16,49 @@ namespace Assets.Sylveed.DDDTools
             InjectionInfo info;
             if (s_injectionMap.TryGetValue(targetType.TypeHandle, out info))
                 return info;
-            
-            var injectFields = targetType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(x => x.GetCustomAttribute(typeof(InjectAttribute)) != null)
-                .ToArray();
 
-            var injectProperties = targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(x => x.GetCustomAttribute(typeof(InjectAttribute)) != null)
-                .ToArray();
-
-            var injectMethods = targetType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(x => x.GetCustomAttribute(typeof(InjectAttribute)) != null)
-                .ToArray();
-
-            info = new InjectionInfo(injectFields, injectProperties, injectMethods);
+			info = CreateInjectionInfo(targetType);
 
             s_injectionMap.Add(targetType.TypeHandle, info);
 
             return info;
-        }
+		}
+
+		static class InjectionInfoCache<T>
+		{
+			public static InjectionInfo cache;
+		}
+
+		static InjectionInfo GetInjectionInfo<T>()
+		{
+			var info = InjectionInfoCache<T>.cache;
+
+			if (info != null)
+				return info;
+
+			info = CreateInjectionInfo(typeof(T));
+
+			InjectionInfoCache<T>.cache = info;
+
+			return info;
+		}
+
+		static InjectionInfo CreateInjectionInfo(Type targetType)
+		{
+			var injectFields = targetType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+				.Where(x => x.GetCustomAttribute(typeof(InjectAttribute)) != null)
+				.ToArray();
+
+			var injectProperties = targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+				.Where(x => x.GetCustomAttribute(typeof(InjectAttribute)) != null)
+				.ToArray();
+
+			var injectMethods = targetType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+				.Where(x => x.GetCustomAttribute(typeof(InjectAttribute)) != null)
+				.ToArray();
+
+			return new InjectionInfo(injectFields, injectProperties, injectMethods);
+		}
 
 		readonly Dictionary<RuntimeTypeHandle, object> map = new Dictionary<RuntimeTypeHandle, object>();
 
@@ -44,13 +68,31 @@ namespace Assets.Sylveed.DDDTools
             return this;
         }
 
+		public ObjectResolver InheritFrom<T>(ObjectResolver parent)
+		{
+			return Register(parent.Resolve<T>());
+		}
+
+		public ObjectResolver DependOn(ObjectResolver dependency)
+		{
+			foreach (var x in map.Values)
+				dependency.ResolveMembers(x);
+			return this;
+		}
+
 		public T ResolveMembers<T>(T target)
 		{
-            GetInjectionInfo(typeof(T)).Inject(this, target);
+            GetInjectionInfo<T>().Inject(this, target);
             return target;
 		}
 
-        public T Resolve<T>()
+		public object ResolveMembers(object target)
+		{
+			GetInjectionInfo(target.GetType()).Inject(this, target);
+			return target;
+		}
+
+		public T Resolve<T>()
         {
             try
             {

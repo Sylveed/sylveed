@@ -47,9 +47,9 @@ namespace Assets.Sylveed.DDDTools.Test
             }
         }
 
-        class SampleRepository : RepositoryBase<int, Model1>
+        class SampleRepository : StorageBase<int, Model1>
         {
-            public IRepositoryIndex<string, Model1> SubIdIndex { get; }
+            public IStorageIndex<string, Model1> SubIdIndex { get; }
 
             public SampleRepository() : base(model => model.Id)
             {

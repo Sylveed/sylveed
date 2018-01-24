@@ -38,7 +38,7 @@ namespace Assets.Sylveed.DDD.Main.Implementation.SPersons
             throw new NotImplementedException();
         }
 
-        public void ShowSkill(Skill skill)
+        public void ShowSkill(SkillVm skill)
         {
             throw new NotImplementedException();
         }

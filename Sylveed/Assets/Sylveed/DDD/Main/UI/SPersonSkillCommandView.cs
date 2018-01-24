@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.Sylveed.DDD.Main.Domain.SPersons;
-using Assets.Sylveed.DDDTools;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.Windows.Speech;
 
 
 namespace Assets.Sylveed.DDD.Main.UI
@@ -20,17 +18,16 @@ namespace Assets.Sylveed.DDD.Main.UI
 		Button skill2Button;
 		[SerializeField]
 		Button skill3Button;
+		
+        SPersonVmService personService;
 
-        [Inject]
-        readonly SPersonService personService;
-
-		SPerson Player => personService.Player;
+		SPersonVm Player => personService.Player;
 
 		readonly Dictionary<int, Button> skillButtonMap = new Dictionary<int, Button>();
 
 		protected override void Awake()
 		{
-            ServiceResolver.ResolveMembers(this);
+            ServiceResolver.Resolve(out personService);
 
 			skillButtonMap.Add(0, skill1Button);
 			skillButtonMap.Add(1, skill2Button);
@@ -38,11 +35,11 @@ namespace Assets.Sylveed.DDD.Main.UI
 
 			skillButtonMap.ForEach(x =>
 			{
-				x.Value.onClick.AddListener(() => UseSkill(new SPersonSkillIndex(x.Key)));
+				x.Value.onClick.AddListener(() => UseSkill(new SPersonVmSkillIndex(x.Key)));
 			});
 		}
 
-		void UseSkill(SPersonSkillIndex index)
+		void UseSkill(SPersonVmSkillIndex index)
 		{
 			Player.UseSkill(index);
 		}

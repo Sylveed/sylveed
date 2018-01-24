@@ -8,12 +8,12 @@ namespace Assets.Sylveed.DDD.Main.Domain.SPersons
 {
     public class SPersonTrait
     {
-        public SPersonId Id { get; }
+        public SPersonVmId Id { get; }
         public string Name { get; }
         public ISPersonView View { get; }
-        public SPersonSkillSet SkillSet { get; }
+        public SPersonVmSkillSet SkillSet { get; }
 
-        public SPersonTrait(SPersonId id, string name, ISPersonView view, SPersonSkillSet skillSet)
+        public SPersonTrait(SPersonVmId id, string name, ISPersonView view, SPersonVmSkillSet skillSet)
         {
             Id = id;
             Name = name;

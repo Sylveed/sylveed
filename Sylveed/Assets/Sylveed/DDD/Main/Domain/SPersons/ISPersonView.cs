@@ -11,7 +11,7 @@ namespace Assets.Sylveed.DDD.Main.Domain.SPersons
     {
         float Speed { get; set; }
         void MoveTo(Vector3 direction);
-        void ShowSkill(Skill skill);
+        void ShowSkill(SkillVm skill);
         Vector3 Position { get; }
         float Angle { get; }
     }

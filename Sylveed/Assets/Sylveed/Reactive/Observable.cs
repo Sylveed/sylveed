@@ -58,5 +58,15 @@ namespace Assets.Sylveed.Reactive
         {
             return new MergeOperator<T>(sources);
         }
+
+        public static IObservable<T> Return<T>(T value)
+        {
+            return new ReturnOperator<T>(value);
+        }
+
+        public static IObservable<Unit> ReturnUnit()
+        {
+            return Return(Unit.Default);
+        }
     }
 }

@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.Sylveed.DDD.Main.Domain.SPersons;
-using Assets.Sylveed.DDDTools;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Experimental.UIElements;
 
 namespace Assets.Sylveed.DDD.Main.UI
 {
 	public class TouchView : UIBehaviour
 	{
-        [Inject]
-        readonly SPersonService personService;
+        SPersonVmService personService;
 
-		SPerson Player => personService.Player;
+		SPersonVm Player => personService.Player;
 
 		protected override void Awake()
 		{
+			ServiceResolver.Resolve(out personService);
+
 			Moving().AddTo(this);
 		}
 
