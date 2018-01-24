@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sylveed
+namespace Assets.Sylveed
 {
 	public static class EnumerableExtensions
 	{

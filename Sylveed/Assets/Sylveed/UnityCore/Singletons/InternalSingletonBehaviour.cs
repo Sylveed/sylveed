@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Sylveed
+namespace Assets.Sylveed
 {
 	public class InternalSingletonBehaviour<T> : MonoBehaviour
 		where T : InternalSingletonBehaviour<T>

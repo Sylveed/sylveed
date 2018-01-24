@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Sylveed.Anim2D
+namespace Assets.Sylveed.Anim2D
 {
 
 }

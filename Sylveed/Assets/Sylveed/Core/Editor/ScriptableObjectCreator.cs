@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Sylveed.Core.Editor
+namespace Assets.Sylveed.Core.Editor
 {
 	public static class ScriptableObjectCreator
 	{

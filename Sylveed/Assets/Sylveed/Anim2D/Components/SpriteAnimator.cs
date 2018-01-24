@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 using UniRx;
 
-namespace Sylveed.Anim2D
+namespace Assets.Sylveed.Anim2D
 {
 	public class SpriteAnimator : MonoBehaviour
 	{

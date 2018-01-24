@@ -5,9 +5,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UniRx;
-using Sylveed.Reactive;
 
-namespace Sylveed.Anim2D
+namespace Assets.Sylveed.Anim2D
 {
 	public class SpriteAnimation : ScriptableObject
 	{

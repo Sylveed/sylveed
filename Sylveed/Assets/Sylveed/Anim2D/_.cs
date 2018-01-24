@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sylveed.Anim2D
+namespace Assets.Sylveed.Anim2D
 {
 
 }
