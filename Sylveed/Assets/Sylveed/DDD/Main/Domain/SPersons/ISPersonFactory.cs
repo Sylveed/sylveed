@@ -8,6 +8,6 @@ namespace Assets.Sylveed.DDD.Main.Domain.SPersons
 {
     public interface ISPersonFactory
     {
-        SPerson Create();
+        SPerson Create(SPersonId id, string name);
     }
 }

@@ -9,7 +9,7 @@ using UniRx;
 using UnityEngine;
 
 
-namespace Assets.Sylveed.DDD.Main.Infrastructure
+namespace Assets.Sylveed.DDDTools.Test
 {
 	static class Sample
 	{

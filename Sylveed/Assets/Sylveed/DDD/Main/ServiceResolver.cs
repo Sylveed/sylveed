@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Assets.Sylveed.DDD.Main.Infrastructure;
+using Assets.Sylveed.DDDTools;
 using Assets.Sylveed.DDD.Main.Domain.Items;
 using Assets.Sylveed.DDD.Main.Domain.SPersons;
 using Assets.Sylveed.DDD.Main.Domain.Skills;
+using Assets.Sylveed.DDD.Main.Application;
+using Assets.Sylveed.DDD.Main.Implementation.SPersons;
 
 namespace Assets.Sylveed.DDD.Main
 {
@@ -15,10 +17,13 @@ namespace Assets.Sylveed.DDD.Main
 
         static ServiceResolver()
         {
+            var baseResolver = new ObjectResolver()
+                .Register(new ResourceProvider());
+
             var inner = new ObjectResolver()
-                .Register<IItemFactory>(null)
-                .Register<ISkillFactory>(null)
-                .Register<ISPersonFactory>(null)
+                .Register<IItemFactory>(baseResolver.ResolveMembers<IItemFactory>(null))
+                .Register<ISkillFactory>(baseResolver.ResolveMembers<ISkillFactory>(null))
+                .Register<ISPersonFactory>(baseResolver.ResolveMembers(new SPersonFactory()))
                 .Register(new ItemRepository())
                 .Register(new SkillRepository())
                 .Register(new SPersonRepository());

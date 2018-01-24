@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace Assets.Sylveed.DDD.Main.World
+namespace Assets.Sylveed.DDD.Main.Implementation.SPersons
 {
+    
 }

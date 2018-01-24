@@ -4,6 +4,6 @@ using System.Linq;
 using System.Text;
 
 
-namespace Assets.Sylveed.DDD.Main.Factory
+namespace Assets.Sylveed.DDD.Main.Implementation
 {
 }

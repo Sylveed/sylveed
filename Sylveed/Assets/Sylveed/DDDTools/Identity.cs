@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace Assets.Sylveed.DDD.Main.Infrastructure
+namespace Assets.Sylveed.DDDTools
 {
 	public class Identity<T, TValue> : IEquatable<T> where T : Identity<T, TValue>
 	{

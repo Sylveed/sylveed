@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Assets.Sylveed.DDD.Main
+
+namespace Assets.Sylveed.DDD.Main.Application
 {
 }

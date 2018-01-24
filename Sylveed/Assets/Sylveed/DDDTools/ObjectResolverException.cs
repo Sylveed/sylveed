@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace Assets.Sylveed.DDD.Main.Infrastructure
+namespace Assets.Sylveed.DDDTools
 {
 	public class ObjectResolverException : Exception
 	{

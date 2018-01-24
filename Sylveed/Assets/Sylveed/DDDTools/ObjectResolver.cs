@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 
 
-namespace Assets.Sylveed.DDD.Main.Infrastructure
+namespace Assets.Sylveed.DDDTools
 {
 	public class ObjectResolver
     {

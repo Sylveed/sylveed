@@ -9,55 +9,30 @@ namespace Assets.Sylveed.DDD.Main.Domain.SPersons
 {
 	public class SPerson
 	{
-		readonly IView view;
-		readonly SPersonSkillSet skillSet;
+        readonly SPersonTrait trait;
 
-		public SPersonId Id { get; }
+        ISPersonView view => trait.View;
+
+        public SPersonId Id => trait.Id;
 
 		public Vector3 Position { get { return view.Position; } }
 
 		public float Angle { get { return view.Angle; } }
 
-		public SPerson(Parameter parameter)
+		public SPerson(SPersonTrait trait)
 		{
-			Id = parameter.Id;
-
-			view = parameter.View;
-			skillSet = parameter.SkillSet;
+            this.trait = trait;
 		}
 
 		public void UseSkill(SPersonSkillIndex index)
 		{
-			
+            view.ShowSkill(trait.SkillSet.GetSkill(index));
 		}
 
 		public void MoveTo(Vector3 direction, float speed)
 		{
-			
-		}
-
-		public interface IView
-		{
-			float Speed { get; set; }
-			void MoveTo(Vector3 direction);
-			void ShowSkill(Skill skill);
-			Vector3 Position { get; set; }
-			float Angle { get; set; }
-		}
-
-		public class Parameter
-		{
-			public SPersonId Id { get; }
-			public string Name { get; }
-			public IView View { get; }
-			public SPersonSkillSet SkillSet { get; }
-
-			public Parameter(SPersonId id, string name, IView view, SPersonSkillSet skillSet)
-			{
-				Id = id;
-				View = view;
-				SkillSet = skillSet;
-			}
+            view.Speed = speed;
+            view.MoveTo(direction);
 		}
 	}
 }

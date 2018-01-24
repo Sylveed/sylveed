@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Assets.Sylveed.DDD.Main.Infrastructure;
+using Assets.Sylveed.DDDTools;
 
 
 namespace Assets.Sylveed.DDD.Main.Domain.SPersons
@@ -23,9 +23,7 @@ namespace Assets.Sylveed.DDD.Main.Domain.SPersons
 
 		public SPerson Create(string name)
 		{
-			var id = new SPersonId(Guid.NewGuid());
-			
-			return repository.Add(factory.Create());
+			return repository.Add(factory.Create(new SPersonId(), name));
 		}
 
 		public void SetPlayer(SPersonId playerId)

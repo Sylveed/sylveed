@@ -6,7 +6,7 @@ using System.Text;
 using Assets.Sylveed.Reactive;
 
 
-namespace Assets.Sylveed.DDD.Main.Infrastructure
+namespace Assets.Sylveed.DDDTools
 {
 	public class RepositoryBase<TKey, TValue>
 	{

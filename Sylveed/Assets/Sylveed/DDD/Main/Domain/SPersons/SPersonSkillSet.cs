@@ -22,5 +22,10 @@ namespace Assets.Sylveed.DDD.Main.Domain.SPersons
 				.Select((x, i) => new KeyValuePair<SPersonSkillIndex, SkillId>(new SPersonSkillIndex(i), x.Id))
 				.ToDictionary(x => x.Key, x => x.Value);
 		}
+
+        public Skill GetSkill(SPersonSkillIndex index)
+        {
+            return idValueMap[indexIdMap[index]];
+        }
 	}
 }
