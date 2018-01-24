@@ -10,17 +10,13 @@ namespace Assets.Sylveed.DDD.Main.Implementation.SPersons
 {
     public class SPersonView : MonoBehaviour, ISPersonView
     {
+		CharacterController characterController;
+		float speed = 3f;
+
         public float Speed
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return speed; }
+            set { speed = value; }
         }
 
         public Vector3 Position
@@ -33,14 +29,21 @@ namespace Assets.Sylveed.DDD.Main.Implementation.SPersons
             get { return transform.localEulerAngles.y; }
         }
 
+		private void Awake()
+		{
+			characterController = GetComponent<CharacterController>();
+		}
+
         public void MoveTo(Vector3 direction)
         {
-            throw new NotImplementedException();
-        }
+			direction.y = 0;
+			//transform.Translate(direction.normalized * speed * Time.deltaTime);
+			characterController.SimpleMove(direction.normalized * speed);
+		}
 
         public void ShowSkill(SkillVm skill)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			Debug.Log("show skill " + skill);
+		}
     }
 }

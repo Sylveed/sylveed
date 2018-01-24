@@ -123,7 +123,7 @@ namespace Assets.Sylveed.DDDTools
                 {
                     object value;
                     if (!parent.map.TryGetValue(x.FieldType.TypeHandle, out value))
-                        throw new ObjectResolverException("object not found.");
+                        throw new ObjectResolverException(string.Format("object not found. \nTarget: {0}\nFieldType: {1}\nFieldName: {2}", target, x.FieldType, x.Name));
 
                     x.SetValue(target, value);
                 }
@@ -132,9 +132,10 @@ namespace Assets.Sylveed.DDDTools
                 {
                     object value;
                     if (!parent.map.TryGetValue(x.PropertyType.TypeHandle, out value))
-                        throw new ObjectResolverException("object not found.");
+						throw new ObjectResolverException(
+							string.Format("object not found.\nTarget: {0}\nPropertyType: {1}\nPropertyName: {2}", target, x.PropertyType, x.Name));
 
-                    x.SetValue(target, value);
+					x.SetValue(target, value);
                 }
 
                 foreach (var x in methods)

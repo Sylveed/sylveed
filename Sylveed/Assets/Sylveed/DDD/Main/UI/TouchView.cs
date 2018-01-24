@@ -44,7 +44,7 @@ namespace Assets.Sylveed.DDD.Main.UI
 					var dir = delta.normalized;
 					var speed = delta.magnitude;
 
-					Player.MoveTo(dir, speed);
+					Player.MoveTo(new Vector3(dir.x, 0, dir.y), speed);
 				})
 				.AddTo(subscription);
 

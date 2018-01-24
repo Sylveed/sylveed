@@ -6,6 +6,7 @@ using Assets.Sylveed.DDDTools;
 using Assets.Sylveed.DDD.Application;
 using Assets.Sylveed.DDD.Data.Items;
 using Assets.Sylveed.DDD.Data.Skills;
+using Assets.Sylveed.DDD.Data.SPersons;
 
 namespace Assets.Sylveed.DDD.Main
 {
@@ -17,11 +18,13 @@ namespace Assets.Sylveed.DDD.Main
         {
 			var componentResolver = new ObjectResolver()
 				.Register(new ItemStorage())
-				.Register(new SkillStorage());
+				.Register(new SkillStorage())
+				.Register(new SPersonStorage());
 
-            serviceResolver = new ObjectResolver()
+			serviceResolver = new ObjectResolver()
                 .Register(componentResolver.ResolveMembers(new ItemService()))
-				.Register(componentResolver.ResolveMembers(new SkillService()));
+				.Register(componentResolver.ResolveMembers(new SkillService()))
+				.Register(componentResolver.ResolveMembers(new SPersonService()));
 		}
 
         public static T ResolveMembers<T>(T target)
