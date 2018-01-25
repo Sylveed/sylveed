@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.Sylveed.DDD.Main.Domain.Characters;
+using Assets.Sylveed.ComponentDI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,16 +11,21 @@ using UnityEngine.UI;
 
 namespace Assets.Sylveed.DDD.Main.UI
 {
-	public class CharacterSkillCommandView : UIBehaviour
+	public class CharacterCommandView : UIBehaviour
 	{
-		[SerializeField]
+		[DINamedComponent]
+		RectTransform skillButtonContainer;
+
+		[DINamedComponent(nameof(skillButtonContainer))]
 		Button skill1Button;
-		[SerializeField]
+		[DINamedComponent(nameof(skillButtonContainer))]
 		Button skill2Button;
-		[SerializeField]
+		[DINamedComponent(nameof(skillButtonContainer))]
 		Button skill3Button;
-		
-        CharacterVmService personService;
+		[DITypedComponent(nameof(skillButtonContainer))]
+		Button[] skillButtons;
+
+		CharacterVmService personService;
 
 		CharacterVm Player => personService.Player;
 
@@ -28,6 +34,7 @@ namespace Assets.Sylveed.DDD.Main.UI
 		protected override void Awake()
 		{
             ServiceResolver.Resolve(out personService);
+			ComponentResolver.Resolve(this);
 
 			skillButtonMap.Add(0, skill1Button);
 			skillButtonMap.Add(1, skill2Button);
@@ -37,6 +44,8 @@ namespace Assets.Sylveed.DDD.Main.UI
 			{
 				x.Value.onClick.AddListener(() => UseSkill(new CharacterVmSkillIndex(x.Key)));
 			});
+			foreach (var x in skillButtons)
+				Debug.Log(x);
 		}
 
 		void UseSkill(CharacterVmSkillIndex index)

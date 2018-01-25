@@ -13,7 +13,7 @@ namespace Assets.Sylveed.DDD.Main.UI
 {
 	public class TouchView : UIBehaviour
 	{
-		[DIComponent]
+		[DITypedComponent]
 		JoyStickView joyStickView;
 
         CharacterVmService personService;

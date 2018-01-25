@@ -12,9 +12,9 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 {
     public class CharacterView : MonoBehaviour, ICharacterView
     {
-		[DIComponent]
+		[DITypedComponent]
 		CharacterController characterController;
-		[DIComponent]
+		[DITypedComponent]
 		NavMeshAgent navMeshAgent;
 
         public float Speed
