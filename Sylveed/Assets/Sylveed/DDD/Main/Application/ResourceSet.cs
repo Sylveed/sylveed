@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using Assets.Sylveed.DDD.Main.Implementation.SPersons;
+using Assets.Sylveed.DDD.Main.Implementation.Characters;
 
 namespace Assets.Sylveed.DDD.Main.Application
 {
     public class ResourceSet : ScriptableObject
     {
         [SerializeField]
-        SPersonView personView;
+        CharacterView personView;
 
-        public SPersonView PersonView => personView;
+        public CharacterView PersonView => personView;
 
         public static ResourceSet Load()
         {

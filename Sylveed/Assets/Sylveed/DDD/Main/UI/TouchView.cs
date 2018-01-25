@@ -2,23 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Assets.Sylveed.DDD.Main.Domain.SPersons;
+using Assets.Sylveed.DDD.Main.Domain.Characters;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Assets.Sylveed.ComponentDI;
 
 namespace Assets.Sylveed.DDD.Main.UI
 {
 	public class TouchView : UIBehaviour
 	{
-        SPersonVmService personService;
+		[DIComponent]
+		JoyStickView joyStickView;
 
-		SPersonVm Player => personService.Player;
+        CharacterVmService personService;
+
+		CharacterVm Player => personService.Player;
 
 		protected override void Awake()
 		{
 			ServiceResolver.Resolve(out personService);
+			ComponentResolver.Resolve(this);
+
+			joyStickView.gameObject.SetActive(false);
 
 			Moving().AddTo(this);
 		}
@@ -28,25 +35,44 @@ namespace Assets.Sylveed.DDD.Main.UI
 			var subscription = new CompositeDisposable();
 
 			var initialPoint = default(Vector2?);
+			var currentDelta = Vector2.zero;
 
 			this.OnBeginDragAsObservable()
-				.Subscribe(e =>
+				.Subscribe(beginEvent =>
 				{
-					initialPoint = e.position;
+					initialPoint = beginEvent.position;
+
+					joyStickView.gameObject.SetActive(true);
+					joyStickView.transform.localPosition = transform.InverseTransformPoint(
+						beginEvent.pressEventCamera.ScreenToWorldPoint(beginEvent.position));
+
+					this.UpdateAsObservable()
+						.TakeUntil(this.OnEndDragAsObservable())
+						.Subscribe(_ =>
+						{
+							var dir = currentDelta.normalized;
+							var speedRatio = joyStickView.SetMovement(currentDelta);
+
+							Player.SetDestinationDirection(new Vector3(dir.x, 0, dir.y), speedRatio);
+						});
 				})
 				.AddTo(subscription);
 
 			this.OnDragAsObservable()
 				.Subscribe(e =>
 				{
-					var delta = e.position - initialPoint.Value;
+					currentDelta = e.position - initialPoint.Value;
+				});
 
-					var dir = delta.normalized;
-					var speed = delta.magnitude;
+			this.OnEndDragAsObservable()
+				.Subscribe(_ =>
+				{
+					joyStickView.gameObject.SetActive(false);
+					initialPoint = null;
+					currentDelta = Vector2.zero;
 
-					Player.MoveTo(new Vector3(dir.x, 0, dir.y), speed);
-				})
-				.AddTo(subscription);
+					Player.StopMovement();
+				});
 
 			return subscription;
 		}

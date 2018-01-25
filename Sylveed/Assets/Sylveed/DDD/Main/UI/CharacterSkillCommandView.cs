@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Assets.Sylveed.DDD.Main.Domain.SPersons;
+using Assets.Sylveed.DDD.Main.Domain.Characters;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace Assets.Sylveed.DDD.Main.UI
 {
-	public class SPersonSkillCommandView : UIBehaviour
+	public class CharacterSkillCommandView : UIBehaviour
 	{
 		[SerializeField]
 		Button skill1Button;
@@ -19,9 +19,9 @@ namespace Assets.Sylveed.DDD.Main.UI
 		[SerializeField]
 		Button skill3Button;
 		
-        SPersonVmService personService;
+        CharacterVmService personService;
 
-		SPersonVm Player => personService.Player;
+		CharacterVm Player => personService.Player;
 
 		readonly Dictionary<int, Button> skillButtonMap = new Dictionary<int, Button>();
 
@@ -35,11 +35,11 @@ namespace Assets.Sylveed.DDD.Main.UI
 
 			skillButtonMap.ForEach(x =>
 			{
-				x.Value.onClick.AddListener(() => UseSkill(new SPersonVmSkillIndex(x.Key)));
+				x.Value.onClick.AddListener(() => UseSkill(new CharacterVmSkillIndex(x.Key)));
 			});
 		}
 
-		void UseSkill(SPersonVmSkillIndex index)
+		void UseSkill(CharacterVmSkillIndex index)
 		{
 			Player.UseSkill(index);
 		}

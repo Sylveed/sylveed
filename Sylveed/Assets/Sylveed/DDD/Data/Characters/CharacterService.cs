@@ -5,14 +5,14 @@ using System.Text;
 using Assets.Sylveed.DDDTools;
 
 
-namespace Assets.Sylveed.DDD.Data.SPersons
+namespace Assets.Sylveed.DDD.Data.Characters
 {
-	public class SPersonService
+	public class CharacterService
 	{
         [Inject]
-        readonly SPersonStorage storage;
+        readonly CharacterStorage storage;
 
-		public IEnumerable<SPerson> Items
+		public IEnumerable<Character> Items
 		{
 			get { return storage.Items; }
 		}

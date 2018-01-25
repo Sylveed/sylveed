@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Assets.Sylveed.DDD.Data.SPersons
+namespace Assets.Sylveed.DDD.Data.Characters
 {
-	public class SPerson
+	public class Character
 	{
-		public SPersonId Id { get; }
+		public CharacterId Id { get; }
         public string Name { get; }
 
-        public SPerson(SPersonId id, string name)
+        public Character(CharacterId id, string name)
 		{
             Id = id;
             Name = name;
