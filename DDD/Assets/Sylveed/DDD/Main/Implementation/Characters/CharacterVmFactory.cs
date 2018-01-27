@@ -14,7 +14,7 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
     public class CharacterVmFactory : ICharacterVmFactory
 	{
 		[Inject]
-		readonly CharacterService personService;
+		readonly CharacterService characterService;
 		[Inject]
         readonly ResourceProvider resourceProvider;
 
@@ -23,7 +23,7 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
             var viewPrefab = resourceProvider.ResourceSet.PersonView;
             var view = UnityEngine.Object.Instantiate(viewPrefab);
 
-            var trait = new CharacterTrait(id, name, view, new CharacterVmSkillSet(new SkillVm[0]));
+            var trait = new CharacterVmTrait(id, name, view, new CharacterVmSkillSet(new SkillVm[0]));
 
             return new CharacterVm(trait);
         }

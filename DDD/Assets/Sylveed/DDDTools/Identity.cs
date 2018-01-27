@@ -45,4 +45,12 @@ namespace Assets.Sylveed.DDDTools
 			return !(x == y);
 		}
 	}
+
+	public class TuppleIdentity<T> : Identity<T, KeyTupple> where T : TuppleIdentity<T>
+	{
+		public TuppleIdentity(params object[] identities) : base(new KeyTupple(identities))
+		{
+
+		}
+	}
 }

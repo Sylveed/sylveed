@@ -9,7 +9,7 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 {
 	public class CharacterVm
 	{
-        readonly CharacterTrait trait;
+        readonly CharacterVmTrait trait;
 
         ICharacterView view => trait.View;
 
@@ -19,7 +19,7 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 
 		public float Angle { get { return view.Angle; } }
 
-		public CharacterVm(CharacterTrait trait)
+		public CharacterVm(CharacterVmTrait trait)
 		{
             this.trait = trait;
 		}

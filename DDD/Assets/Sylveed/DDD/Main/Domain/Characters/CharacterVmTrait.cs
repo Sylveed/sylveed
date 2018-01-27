@@ -6,14 +6,14 @@ using System.Text;
 
 namespace Assets.Sylveed.DDD.Main.Domain.Characters
 {
-    public class CharacterTrait
+    public class CharacterVmTrait
     {
         public CharacterVmId Id { get; }
         public string Name { get; }
         public ICharacterView View { get; }
         public CharacterVmSkillSet SkillSet { get; }
 
-        public CharacterTrait(CharacterVmId id, string name, ICharacterView view, CharacterVmSkillSet skillSet)
+        public CharacterVmTrait(CharacterVmId id, string name, ICharacterView view, CharacterVmSkillSet skillSet)
         {
             Id = id;
             Name = name;
