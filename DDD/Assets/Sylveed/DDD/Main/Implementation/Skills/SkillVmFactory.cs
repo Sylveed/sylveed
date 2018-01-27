@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Assets.Sylveed.Reactive;
+using UniRx;
 
 using Assets.Sylveed.DDDTools;
 using Assets.Sylveed.DDD.Main.Domain.Skills;

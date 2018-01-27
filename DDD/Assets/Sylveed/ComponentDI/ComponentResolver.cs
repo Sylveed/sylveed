@@ -48,15 +48,17 @@ namespace Assets.Sylveed.ComponentDI
 			var properties = targetType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 				.Select(x =>
 				{
-					var attr = x.GetCustomAttribute(typeof(DIComponentAttribute)) as DIComponentAttribute;
-					if (attr == null) return null;
+					var attrs = x.GetCustomAttributes(typeof(DIComponentAttribute), true);
+					if (attrs == null || attrs.Length == 0) return null;
+					var attr = attrs[0] as DIComponentAttribute;
 					return new DIProperty(x, GetFindMode(attr), attr.ParentName);
 				})
 				.Concat(targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 					.Select(x =>
 					{
-						var attr = x.GetCustomAttribute(typeof(DIComponentAttribute)) as DIComponentAttribute;
-						if (attr == null) return null;
+						var attrs = x.GetCustomAttributes(typeof(DIComponentAttribute), true);
+						if (attrs == null || attrs.Length == 0) return null;
+						var attr = attrs[0] as DIComponentAttribute;
 						return new DIProperty(x, GetFindMode(attr), attr.ParentName);
 					})
 				)
@@ -328,7 +330,7 @@ namespace Assets.Sylveed.ComponentDI
 				if (property == null)
 					field.SetValue(target, value);
 				else
-					property.SetValue(target, value);
+					property.SetValue(target, value, null);
 			}
 		}
 

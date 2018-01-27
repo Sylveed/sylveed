@@ -46,15 +46,15 @@ namespace Assets.Sylveed.DDDTools
 		static InjectionInfo CreateInjectionInfo(Type targetType)
 		{
 			var injectFields = targetType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-				.Where(x => x.GetCustomAttribute(typeof(InjectAttribute)) != null)
+				.Where(x => x.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0)
 				.ToArray();
 
 			var injectProperties = targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-				.Where(x => x.GetCustomAttribute(typeof(InjectAttribute)) != null)
+				.Where(x => x.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0)
 				.ToArray();
 
 			var injectMethods = targetType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-				.Where(x => x.GetCustomAttribute(typeof(InjectAttribute)) != null)
+				.Where(x => x.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0)
 				.ToArray();
 
 			return new InjectionInfo(injectFields, injectProperties, injectMethods);
@@ -135,7 +135,7 @@ namespace Assets.Sylveed.DDDTools
 						throw new ObjectResolverException(
 							string.Format("object not found.\nTarget: {0}\nPropertyType: {1}\nPropertyName: {2}", target, x.PropertyType, x.Name));
 
-					x.SetValue(target, value);
+					x.SetValue(target, value, null);
                 }
 
                 foreach (var x in methods)

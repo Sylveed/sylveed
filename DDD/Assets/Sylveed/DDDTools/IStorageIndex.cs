@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Assets.Sylveed.DDDTools
 {
-	public interface IStorageIndex<in TKey, out TValue>
+	public interface IStorageIndex<TKey, TValue>
 	{
 		IEnumerable<TValue> Get(TKey key);
 		bool Remove(TKey key);
