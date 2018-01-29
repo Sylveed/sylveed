@@ -12,14 +12,10 @@ namespace Assets.Sylveed.DDD.Main.Domain.Players
         [Inject]
         readonly PlayerStorage storage;
 
-		PlayerId localUserPlayerId;
-
 		[Inject]
 		void Initialize()
 		{
-			localUserPlayerId = new PlayerId();
-
-			storage.Add(new UserPlayer(localUserPlayerId, "TestUser", new CharacterId(1)));
+			storage.AddLocalUserPlayer(new UserPlayer(new PlayerId(), "TestUser", new CharacterId(1)));
 			storage.Add(new CpuPlayer(new PlayerId(), "Cpu1", new CharacterId(1)));
 			storage.Add(new CpuPlayer(new PlayerId(), "Cpu2", new CharacterId(2)));
 			storage.Add(new CpuPlayer(new PlayerId(), "Cpu3", new CharacterId(3)));
@@ -34,7 +30,7 @@ namespace Assets.Sylveed.DDD.Main.Domain.Players
 
 		public IPlayer GetLocalUserPlayer()
 		{
-			return storage.Get(localUserPlayerId);
+			return storage.GetLocalUserPlayer();
 		}
 	}
 }

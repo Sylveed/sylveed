@@ -17,19 +17,9 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 		[Inject]
 		readonly PlayerStorage playerStorage;
 
-		CharacterVmId playerId;
-
-		public CharacterVm LocalUser
+		public CharacterVm Create(IPlayer player)
 		{
-			get
-			{
-				return playerId == null ? null : storage.Get(playerId);
-			}
-		}
-
-		public CharacterVm Create(CharacterId characterId, IPlayer player)
-		{
-			return storage.Add(factory.Create(characterId, new CharacterVmId(), player));
+			return storage.Add(factory.Create(new CharacterVmId(), player));
 		}
 
 		public CharacterVm Get(CharacterVmId id)
@@ -40,6 +30,11 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 		public CharacterVm GetWithPlayerId(PlayerId id)
 		{
 			return storage.PlayerIdIndex.Get(id).SingleOrDefault();
+		}
+
+		public CharacterVm GetLocalUser()
+		{
+			return GetWithPlayerId(playerStorage.GetLocalUserPlayer().Id);
 		}
 	}
 }

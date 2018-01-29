@@ -10,9 +10,9 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 {
 	public class CharacterVm
 	{
+		readonly SkillVmService skillService;
         readonly CharacterVmTrait trait;
-
-        ICharacterView view => trait.View;
+		readonly ICharacterView view;
 
         public CharacterVmId Id => trait.Id;
 
@@ -22,16 +22,17 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 
 		public float Angle { get { return view.Angle; } }
 
-		public CharacterVm(CharacterVmTrait trait)
+		public CharacterVm(CharacterVmTrait trait, ICharacterView view)
 		{
             this.trait = trait;
+			this.view = view;
 		}
 
 		public void UseSkill(int index)
 		{
 			var skill = trait.Skills.ElementAt(index);
 
-			//view.ShowSkill();
+			view.ShowSkill(skill);
 		}
 
 		public void SetDestinationDirection(Vector3 direction, float speedRatio)

@@ -7,6 +7,7 @@ using UnityEngine.AI;
 using Assets.Sylveed.DDD.Main.Domain.Characters;
 using Assets.Sylveed.DDD.Main.Domain.Skills;
 using Assets.Sylveed.ComponentDI;
+using Assets.Sylveed.DDD.Data.Skills;
 
 namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 {
@@ -51,7 +52,7 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 			navMeshAgent.SetDestination(transform.position);
 		}
 
-        public void ShowSkill(SkillVm skill)
+        public void ShowSkill(Skill skill)
 		{
 			Debug.Log("show skill " + skill);
 		}

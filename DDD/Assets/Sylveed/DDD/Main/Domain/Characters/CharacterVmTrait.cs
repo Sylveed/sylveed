@@ -16,15 +16,13 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
     public class CharacterVmTrait
     {
         public CharacterVmId Id { get; }
-        public ICharacterView View { get; }
         public IEnumerable<Skill> Skills { get; }
 		public Character Character { get; }
 		public IPlayer Player { get; }
 
-		public CharacterVmTrait(CharacterVmId id, ICharacterView view, Character character, IEnumerable<Skill> skills, IPlayer player)
+		public CharacterVmTrait(CharacterVmId id, Character character, IEnumerable<Skill> skills, IPlayer player)
         {
             Id = id;
-            View = view;
 			Character = character;
 			Skills = skills.ToArray();
 			Player = player;

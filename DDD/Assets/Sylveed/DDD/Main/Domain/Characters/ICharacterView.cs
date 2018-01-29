@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Assets.Sylveed.DDD.Main.Domain.Skills;
+using Assets.Sylveed.DDD.Data.Skills;
 
 namespace Assets.Sylveed.DDD.Main.Domain.Characters
 {
@@ -12,7 +13,7 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
         float Speed { get; set; }
         void SetDestination(Vector3 direction);
 		void StopMovement();
-        void ShowSkill(SkillVm skill);
+        void ShowSkill(Skill skill);
         Vector3 Position { get; }
         float Angle { get; }
     }

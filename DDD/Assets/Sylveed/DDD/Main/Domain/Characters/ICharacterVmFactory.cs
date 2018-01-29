@@ -9,6 +9,6 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 {
     public interface ICharacterVmFactory
     {
-        CharacterVm Create(CharacterId characterId, CharacterVmId id, IPlayer player);
+        CharacterVm Create(CharacterVmId id, IPlayer player);
     }
 }

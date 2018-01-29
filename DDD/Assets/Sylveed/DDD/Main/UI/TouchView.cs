@@ -20,10 +20,8 @@ namespace Assets.Sylveed.DDD.Main.UI
 
 		[Inject]
 		readonly CharacterVmService characterService;
-		[Inject]
-		readonly PlayerService playerService;
 
-		CharacterVm Player => characterService.GetWithPlayerId(playerService.GetLocalUserPlayer().Id);
+		CharacterVm Player => characterService.GetLocalUser();
 
 		protected override void Awake()
 		{

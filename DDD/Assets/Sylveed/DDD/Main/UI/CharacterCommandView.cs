@@ -29,10 +29,8 @@ namespace Assets.Sylveed.DDD.Main.UI
 
 		[Inject]
 		readonly CharacterVmService characterService;
-		[Inject]
-		readonly PlayerService playerService;
 
-		CharacterVm Player => characterService.GetWithPlayerId(playerService.GetLocalUserPlayer().Id);
+		CharacterVm Player => characterService.GetLocalUser();
 
 		readonly Dictionary<int, Button> skillButtonMap = new Dictionary<int, Button>();
 

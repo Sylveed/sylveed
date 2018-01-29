@@ -22,18 +22,19 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 		[Inject]
         readonly ResourceProvider resourceProvider;
 
-        public CharacterVm Create(CharacterId characterId, CharacterVmId id, IPlayer player)
+        public CharacterVm Create(CharacterVmId id, IPlayer player)
         {
             var viewPrefab = resourceProvider.ResourceSet.PersonView;
             var view = UnityEngine.Object.Instantiate(viewPrefab);
 
+			var characterId = player.CharacterId;
 			var character = characterService.Get(characterId);
 			var skillIds = characterService.GetSkillIds(characterId);
 			var skills = skillIds.Select(x => skillService.Get(x));
 
-			var trait = new CharacterVmTrait(id, view, character, skills, player);
+			var trait = new CharacterVmTrait(id, character, skills, player);
 
-            return new CharacterVm(trait);
+            return new CharacterVm(trait, view);
         }
     }
 }

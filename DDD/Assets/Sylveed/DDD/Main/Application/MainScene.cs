@@ -19,7 +19,7 @@ namespace Assets.Sylveed.DDD.Main
 			ServiceResolver.Resolve(out characterService);
 			ServiceResolver.Resolve(out playerService);
 
-			var player = characterService.Create(new CharacterId(1), playerService.GetLocalUserPlayer());
+			var player = characterService.Create(playerService.GetLocalUserPlayer());
 		}
 	}
 }
