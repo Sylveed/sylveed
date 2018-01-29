@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.Sylveed.DDDTools;
-
+using Assets.Sylveed.DDD.Data.Characters;
+using Assets.Sylveed.DDD.Main.Domain.Players;
 
 namespace Assets.Sylveed.DDD.Main.Domain.Characters
 {
@@ -13,22 +14,32 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
         readonly ICharacterVmFactory factory;
         [Inject]
         readonly CharacterVmStorage storage;
+		[Inject]
+		readonly PlayerStorage playerStorage;
 
 		CharacterVmId playerId;
 
-		public CharacterVm Player
+		public CharacterVm LocalUser
 		{
-			get { return playerId == null ? null : storage.Get(playerId); }
+			get
+			{
+				return playerId == null ? null : storage.Get(playerId);
+			}
 		}
 
-		public CharacterVm Create(string name)
+		public CharacterVm Create(CharacterId characterId, IPlayer player)
 		{
-			return storage.Add(factory.Create(new CharacterVmId(), name));
+			return storage.Add(factory.Create(characterId, new CharacterVmId(), player));
 		}
 
-		public void SetPlayer(CharacterVmId playerId)
+		public CharacterVm Get(CharacterVmId id)
 		{
-			this.playerId = playerId;
+			return storage.Get(id);
+		}
+
+		public CharacterVm GetWithPlayerId(PlayerId id)
+		{
+			return storage.PlayerIdIndex.Get(id).SingleOrDefault();
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Assets.Sylveed.DDD.Main.Domain.Skills;
+using Assets.Sylveed.DDD.Main.Domain.Players;
 
 namespace Assets.Sylveed.DDD.Main.Domain.Characters
 {
@@ -15,6 +16,8 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 
         public CharacterVmId Id => trait.Id;
 
+		public IPlayer Player => trait.Player;
+
 		public Vector3 Position { get { return view.Position; } }
 
 		public float Angle { get { return view.Angle; } }
@@ -24,9 +27,11 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
             this.trait = trait;
 		}
 
-		public void UseSkill(CharacterVmSkillIndex index)
+		public void UseSkill(int index)
 		{
-            view.ShowSkill(trait.SkillSet.GetSkill(index));
+			var skill = trait.Skills.ElementAt(index);
+
+			//view.ShowSkill();
 		}
 
 		public void SetDestinationDirection(Vector3 direction, float speedRatio)

@@ -11,6 +11,7 @@ using Assets.Sylveed.DDDTools;
 using Assets.Sylveed.DDD.Main.Domain.Items;
 using Assets.Sylveed.DDD.Main.Domain.Characters;
 using Assets.Sylveed.DDD.Main.Domain.Skills;
+using Assets.Sylveed.DDD.Main.Domain.Players;
 using Assets.Sylveed.DDD.Main.Application;
 using Assets.Sylveed.DDD.Main.Implementation.Characters;
 using Assets.Sylveed.DDD.Main.Implementation.Skills;
@@ -39,12 +40,14 @@ namespace Assets.Sylveed.DDD.Main
                 .Register(new ItemVmStorage())
                 .Register(new SkillVmStorage())
                 .Register(new CharacterVmStorage())
+				.Register(new PlayerStorage())
 				.DependOn(baseResolver);
 
             serviceResolver = new ObjectResolver()
                 .Register(new ItemVmService())
                 .Register(new SkillVmService())
                 .Register(new CharacterVmService())
+				.Register(new PlayerService())
 				.DependOn(inner);
         }
 

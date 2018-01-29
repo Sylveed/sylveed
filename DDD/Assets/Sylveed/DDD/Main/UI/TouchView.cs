@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.Sylveed.DDD.Main.Domain.Characters;
+using Assets.Sylveed.DDD.Main.Domain.Players;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Assets.Sylveed.ComponentDI;
+using Assets.Sylveed.DDDTools;
 
 namespace Assets.Sylveed.DDD.Main.UI
 {
@@ -16,13 +18,16 @@ namespace Assets.Sylveed.DDD.Main.UI
 		[DITypedComponent]
 		JoyStickView joyStickView;
 
-        CharacterVmService personService;
+		[Inject]
+		readonly CharacterVmService characterService;
+		[Inject]
+		readonly PlayerService playerService;
 
-		CharacterVm Player => personService.Player;
+		CharacterVm Player => characterService.GetWithPlayerId(playerService.GetLocalUserPlayer().Id);
 
 		protected override void Awake()
 		{
-			ServiceResolver.Resolve(out personService);
+			ServiceResolver.ResolveMembers(this);
 			ComponentResolver.Resolve(this);
 
 			joyStickView.gameObject.SetActive(false);

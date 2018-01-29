@@ -16,5 +16,10 @@ namespace Assets.Sylveed.DDD.Data.Skills
 		{
 			get { return storage.Items; }
 		}
+
+		public Skill Get(SkillId id)
+		{
+			return storage.Get(id);
+		}
 	}
 }
