@@ -17,8 +17,10 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 		CharacterController characterController;
 		[DITypedComponent]
 		NavMeshAgent navMeshAgent;
+		[DITypedComponent]
+		ICharacterBody body;
 
-        public float Speed
+		public float Speed
         {
             get { return navMeshAgent.speed; }
             set { navMeshAgent.speed = value; }

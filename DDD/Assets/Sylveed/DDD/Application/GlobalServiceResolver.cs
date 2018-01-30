@@ -71,9 +71,9 @@ namespace Assets.Sylveed.DDD.Application
 
 		static void TestSetupStorage(CharacterStorage storage)
 		{
-			storage.Add(new Character(new CharacterId(1), "Character1"));
-			storage.Add(new Character(new CharacterId(2), "Character2"));
-			storage.Add(new Character(new CharacterId(3), "Character3"));
+			storage.Add(new Character(new CharacterId(1), new CharacterFamilyId(1), "Character1"));
+			storage.Add(new Character(new CharacterId(2), new CharacterFamilyId(1), "Character2"));
+			storage.Add(new Character(new CharacterId(3), new CharacterFamilyId(1), "Character3"));
 		}
 
 		static void TestSetupStorage(CharacterSkillStorage storage)

@@ -8,12 +8,14 @@ namespace Assets.Sylveed.DDD.Data.Characters
 	public class Character
 	{
 		public CharacterId Id { get; }
+		public CharacterFamilyId FamilyId { get; }
         public string Name { get; }
 
-        public Character(CharacterId id, string name)
+        public Character(CharacterId id, CharacterFamilyId familyId, string name)
 		{
             Id = id;
-            Name = name;
+			FamilyId = familyId;
+			Name = name;
 		}
 	}
 }

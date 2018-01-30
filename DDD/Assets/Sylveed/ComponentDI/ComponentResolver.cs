@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace Assets.Sylveed.ComponentDI
 {
+	using Internal;
+
 	public static class ComponentResolver
 	{
 		static readonly Dictionary<RuntimeTypeHandle, InjectionInfo> s_injectionMap = new Dictionary<RuntimeTypeHandle, InjectionInfo>();
@@ -51,7 +53,7 @@ namespace Assets.Sylveed.ComponentDI
 					var attrs = x.GetCustomAttributes(typeof(DIComponentAttribute), true);
 					if (attrs == null || attrs.Length == 0) return null;
 					var attr = attrs[0] as DIComponentAttribute;
-					return new DIProperty(x, GetFindMode(attr), attr.ParentName);
+					return new DIProperty(x, attr);
 				})
 				.Concat(targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 					.Select(x =>
@@ -59,23 +61,13 @@ namespace Assets.Sylveed.ComponentDI
 						var attrs = x.GetCustomAttributes(typeof(DIComponentAttribute), true);
 						if (attrs == null || attrs.Length == 0) return null;
 						var attr = attrs[0] as DIComponentAttribute;
-						return new DIProperty(x, GetFindMode(attr), attr.ParentName);
+						return new DIProperty(x, attr);
 					})
 				)
 				.Where(x => x != null)
 				.ToArray();
 
 			return new InjectionInfo(properties);
-		}
-
-		static FindMode GetFindMode(DIComponentAttribute attr)
-		{
-			if (attr is DITypedComponentAttribute)
-				return FindMode.Type;
-			if (attr is DINamedComponentAttribute)
-				return FindMode.Name;
-
-			throw new NotImplementedException();
 		}
 
 		public static void Resolve<T>(T target) where T : Component
@@ -128,22 +120,13 @@ namespace Assets.Sylveed.ComponentDI
 					}
 				}
 
-				if (property.FindMode == FindMode.Type)
-				{
-					return parent.FindChild(property.Type);
-				}
-				else if (property.FindMode == FindMode.Name)
-				{
-					return parent.FindChild(property.ComponentPath, property.Type);
-				}
-				else throw new NotImplementedException();
+				return parent.FindChild(property);
 			}
 
 			interface IComponent
 			{
 				object GetValue();
-				IComponent FindChild(Type type);
-				IComponent FindChild(string name, Type type);
+				IComponent FindChild(DIProperty property);
 			}
 
 			class SingleComponent : IComponent
@@ -160,25 +143,27 @@ namespace Assets.Sylveed.ComponentDI
 					return value;
 				}
 
-				public IComponent FindChild(Type type)
+				public IComponent FindChild(DIProperty property)
 				{
-					if (type.IsArray)
+					if (property.FindMode == FindMode.Type)
 					{
-						var elementType = type.GetElementType();
+						var type = property.Type;
+						if (type.IsArray)
+						{
+							var elementType = type.GetElementType();
 
-						return new MultipleComponent(value.GetComponentsInChildren(elementType, true), elementType);
+							return new MultipleComponent(TransformHelper.FindChildComponents(value, elementType, property.IsRecursive), elementType);
+						}
+						else
+						{
+							return new SingleComponent(TransformHelper.FindChildComponent(value, type, property.IsRecursive));
+						}
 					}
-					else
+					else if (property.FindMode == FindMode.Name)
 					{
-						return new SingleComponent(value.GetComponentInChildren(type, true));
+						return new SingleComponent(TransformHelper.FindChildComponent(value, property.Type, property.ComponentPath, property.IsRecursive));
 					}
-				}
-
-				public IComponent FindChild(string name, Type type)
-				{
-					var transform = value.transform.Find(name);
-					if (transform == null) return null;
-					return new SingleComponent(transform.GetComponent(type));
+					throw new NotImplementedException();
 				}
 			}
 
@@ -202,28 +187,33 @@ namespace Assets.Sylveed.ComponentDI
 					return array;
 				}
 
-				public IComponent FindChild(Type type)
+				public IComponent FindChild(DIProperty property)
 				{
-					if (type.IsArray)
+					if (property.FindMode == FindMode.Type)
 					{
-						var elementType = type.GetElementType();
+						var type = property.Type;
+						if (type.IsArray)
+						{
+							var elementType = type.GetElementType();
 
-						return new MultipleComponent(value.SelectMany(x => x.GetComponentsInChildren(elementType, true)), elementType);
+							return new MultipleComponent(value.SelectMany(x => TransformHelper.FindChildComponents(x, elementType, property.IsRecursive)), elementType);
+						}
+						else
+						{
+							return new MultipleComponent(value.Select(x => TransformHelper.FindChildComponent(x, elementType, property.IsRecursive)), type);
+						}
 					}
-					else
+					else if (property.FindMode == FindMode.Name)
 					{
-						return new MultipleComponent(value.Select(x => x.GetComponentInChildren(type, true)), type);
-					}
-				}
+						var path = property.ComponentPath;
+						var type = property.Type;
 
-				public IComponent FindChild(string name, Type type)
-				{
-					return new MultipleComponent(value.Select(x =>
-					{
-						var transform = x.transform.Find(name);
-						if (transform == null) return null;
-						return transform.GetComponent(type);
-					}), type);
+						return new MultipleComponent(value.Select(x =>
+						{
+							return TransformHelper.FindChildComponent(x, type, path, property.IsRecursive);
+						}), type);
+					}
+					throw new NotImplementedException();
 				}
 			}
 
@@ -288,6 +278,7 @@ namespace Assets.Sylveed.ComponentDI
 			readonly PropertyInfo property;
 			readonly FindMode findMode;
 			readonly string parentName;
+			readonly bool isRecursive = false;
 
 			public FindMode FindMode { get { return findMode; } }
 
@@ -311,18 +302,25 @@ namespace Assets.Sylveed.ComponentDI
 				get { return parentName; }
 			}
 
-			public DIProperty(FieldInfo field, FindMode findMode, string parentName)
+			public bool IsRecursive
 			{
-				this.field = field;
-				this.findMode = findMode;
-				this.parentName = parentName;
+				get { return isRecursive; }
 			}
 
-			public DIProperty(PropertyInfo property, FindMode findMode, string parentName)
+			public DIProperty(MemberInfo member, DIComponentAttribute attr)
 			{
-				this.property = property;
-				this.findMode = findMode;
-				this.parentName = parentName;
+				if (member is PropertyInfo)
+					property = member as PropertyInfo;
+				else if (member is FieldInfo)
+					field = member as FieldInfo;
+
+				if (attr is DITypedComponentAttribute)
+					findMode = FindMode.Type;
+				else if (attr is DINamedComponentAttribute)
+					findMode = FindMode.Name;
+
+				parentName = attr.ParentName;
+				isRecursive = attr.IsRecursive;
 			}
 
 			public void SetValue(object target, object value)

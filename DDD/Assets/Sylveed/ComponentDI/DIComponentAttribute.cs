@@ -12,6 +12,8 @@ namespace Assets.Sylveed.ComponentDI
 
 		public string ParentName { get { return parentName; } }
 
+		public bool IsRecursive { get; }
+
 		public DIComponentAttribute()
 		{
 		}
@@ -19,6 +21,11 @@ namespace Assets.Sylveed.ComponentDI
 		public DIComponentAttribute(string parentName)
 		{
 			this.parentName = parentName;
+		}
+
+		public DIComponentAttribute(bool recurcive) : base()
+		{
+			IsRecursive = recurcive;
 		}
 	}
 	
@@ -32,6 +39,10 @@ namespace Assets.Sylveed.ComponentDI
 		public DITypedComponentAttribute(string parentName) : base(parentName)
 		{
 		}
+
+		public DITypedComponentAttribute(bool recurcive) : base(recurcive)
+		{
+		}
 	}
 	
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
@@ -42,6 +53,10 @@ namespace Assets.Sylveed.ComponentDI
 		}
 
 		public DINamedComponentAttribute(string parentName) : base(parentName)
+		{
+		}
+
+		public DINamedComponentAttribute(bool recurcive) : base(recurcive)
 		{
 		}
 	}
