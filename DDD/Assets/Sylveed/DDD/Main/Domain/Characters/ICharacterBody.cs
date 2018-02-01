@@ -12,10 +12,4 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 	{
 
     }
-
-	public interface IRobotBody : ICharacterBody
-	{
-		Vector3 NozzleStubPosition { get; }
-		Vector3 NozzleDirection { get; }
-	}
 }

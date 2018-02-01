@@ -7,18 +7,24 @@ using UnityEngine.AI;
 using Assets.Sylveed.DDD.Main.Domain.Characters;
 using Assets.Sylveed.DDD.Main.Domain.Skills;
 using Assets.Sylveed.ComponentDI;
+using Assets.Sylveed.DDDTools;
 using Assets.Sylveed.DDD.Data.Skills;
+using Assets.Sylveed.DDD.Main.Implementation.Characters.Helpers;
 
 namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 {
     public class CharacterView : MonoBehaviour, ICharacterView
     {
 		[DITypedComponent]
-		CharacterController characterController;
+		readonly CharacterController characterController;
 		[DITypedComponent]
-		NavMeshAgent navMeshAgent;
+		readonly NavMeshAgent navMeshAgent;
 		[DITypedComponent]
-		ICharacterBody body;
+		readonly ICharacterBody body;
+		[Inject]
+		readonly SkillVmService skillService;
+
+		SkillRouter skillRouter;
 
 		public float Speed
         {
@@ -39,8 +45,11 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 		private void Awake()
 		{
 			ComponentResolver.Resolve(this);
+			ServiceResolver.Resolve(this);
 
 			navMeshAgent.updateRotation = false;
+
+			skillRouter = new SkillRouter(skillService, body);
 		}
 
 		public void SetDestination(Vector3 destination)
@@ -54,8 +63,10 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 			navMeshAgent.SetDestination(transform.position);
 		}
 
-        public void ShowSkill(Skill skill)
+        public void ShowSkill(Skill skill, ISkillTarget[] targets)
 		{
+			skillRouter.Route(skill.Id, targets);
+
 			Debug.Log("show skill " + skill);
 		}
     }

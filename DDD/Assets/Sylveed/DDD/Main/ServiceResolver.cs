@@ -51,7 +51,7 @@ namespace Assets.Sylveed.DDD.Main
 				.DependOn(inner);
         }
 
-        public static T ResolveMembers<T>(T target)
+        public static T Resolve<T>(T target)
         {
             Instance.serviceResolver.ResolveMembers(target);
             return target;

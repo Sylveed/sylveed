@@ -13,3 +13,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine:UnityEngine:ScriptableObject
   personView: {fileID: 114219728294426290, guid: 6b6dc14416976654b91484a53190a3f9,
     type: 2}
+  skills:
+    shootBulletView: {fileID: 114139922371190278, guid: 979824b4dcbddfa4096e731f94c22887,
+      type: 2}

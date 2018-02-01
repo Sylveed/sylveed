@@ -64,9 +64,9 @@ namespace Assets.Sylveed.DDD.Application
 
 		static void TestSetupStorage(SkillStorage storage)
 		{
-			storage.Add(new Skill(new SkillId(1), "Skill1"));
-			storage.Add(new Skill(new SkillId(2), "Skill2"));
-			storage.Add(new Skill(new SkillId(3), "Skill3"));
+			storage.Add(new Skill(new SkillId(1), "Skill1", "Skill1"));
+			storage.Add(new Skill(new SkillId(2), "Skill2", "Skill2"));
+			storage.Add(new Skill(new SkillId(3), "Skill3", "Skill3"));
 		}
 
 		static void TestSetupStorage(CharacterStorage storage)

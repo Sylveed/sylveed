@@ -10,7 +10,6 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 {
 	public class CharacterVm
 	{
-		readonly SkillVmService skillService;
         readonly CharacterVmTrait trait;
 		readonly ICharacterView view;
 
@@ -28,11 +27,11 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 			this.view = view;
 		}
 
-		public void UseSkill(int index)
+		public void UseSkill(int index, params ISkillTarget[] targets)
 		{
 			var skill = trait.Skills.ElementAt(index);
 
-			view.ShowSkill(skill);
+			view.ShowSkill(skill, targets);
 		}
 
 		public void SetDestinationDirection(Vector3 direction, float speedRatio)

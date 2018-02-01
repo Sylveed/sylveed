@@ -25,7 +25,7 @@ namespace Assets.Sylveed.DDD.Main.UI
 
 		protected override void Awake()
 		{
-			ServiceResolver.ResolveMembers(this);
+			ServiceResolver.Resolve(this);
 			ComponentResolver.Resolve(this);
 
 			joyStickView.gameObject.SetActive(false);

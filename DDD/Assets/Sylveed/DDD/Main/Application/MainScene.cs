@@ -20,6 +20,8 @@ namespace Assets.Sylveed.DDD.Main
 			ServiceResolver.Resolve(out playerService);
 
 			var player = characterService.Create(playerService.GetLocalUserPlayer());
+
+			var npc = characterService.Create(playerService.CpuPlayers.First());
 		}
 	}
 }

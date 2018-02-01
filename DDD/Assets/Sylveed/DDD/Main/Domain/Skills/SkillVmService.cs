@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.Sylveed.DDDTools;
-using UniRx;
-
+using Assets.Sylveed.DDD.Data.Skills;
+using Assets.Sylveed.DDD.Main.Domain.Characters;
 
 namespace Assets.Sylveed.DDD.Main.Domain.Skills
 {
@@ -15,19 +15,9 @@ namespace Assets.Sylveed.DDD.Main.Domain.Skills
         [Inject]
         readonly SkillVmStorage storage;
 
-		public IObservable<Unit> Load()
+		public SkillVm Create(SkillId skillId)
 		{
-			return factory.Load()
-				.Do(skills =>
-				{
-					storage.Clear();
-
-					foreach (var skill in skills)
-					{
-						storage.Add(skill);
-					}
-				})
-				.AsUnitObservable();
+			return factory.Create(skillId, new SkillVmId());
 		}
 	}
 }

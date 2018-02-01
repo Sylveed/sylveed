@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Assets.Sylveed.DDDTools;
-
 
 namespace Assets.Sylveed.DDD.Main.Domain.Skills
 {
-	public class SkillVmId : Identity<SkillVmId, Guid>
+	public interface ISkillInvoker
 	{
-		public SkillVmId() : base(Guid.NewGuid())
-		{
-		}
+		void Invoke(ISkillView skillView);
 	}
 }

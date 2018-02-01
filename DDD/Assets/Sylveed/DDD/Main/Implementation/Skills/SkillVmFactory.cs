@@ -6,8 +6,10 @@ using UniRx;
 
 using Assets.Sylveed.DDDTools;
 using Assets.Sylveed.DDD.Main.Domain.Skills;
-using Assets.Sylveed.DDD.Main.Application;
 using Assets.Sylveed.DDD.Data.Skills;
+using Assets.Sylveed.DDD.Main.Domain.Characters;
+using Assets.Sylveed.DDD.Main.Application;
+using UnityEngine;
 
 namespace Assets.Sylveed.DDD.Main.Implementation.Skills
 {
@@ -15,15 +17,17 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Skills
     {
 		[Inject]
 		readonly SkillService skillService;
+		[Inject]
+		readonly ResourceProvider resourceProvider;
 
-        public IObservable<SkillVm[]> Load()
-        {
-            return Observable.Return(new[]
-            {
-                new SkillVm(new SkillVmId(0)),
-                new SkillVm(new SkillVmId(1)),
-                new SkillVm(new SkillVmId(2)),
-            });
-        }
+		public SkillVm Create(SkillId skillId, SkillVmId id)
+		{
+			var prefab = resourceProvider.ResourceSet.Skills.ShootBulletView;
+
+			var skill = skillService.Get(skillId);
+			var view = GameObject.Instantiate(prefab);
+
+			return new SkillVm(id, skill, view);
+		}
     }
 }

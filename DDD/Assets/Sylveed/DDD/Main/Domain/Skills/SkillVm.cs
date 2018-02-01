@@ -1,18 +1,28 @@
-﻿using System;
+﻿using Assets.Sylveed.DDD.Data.Skills;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 
 namespace Assets.Sylveed.DDD.Main.Domain.Skills
 {
 	public class SkillVm
 	{
-		public SkillVmId Id { get; }
+		readonly ISkillView view;
 
-		public SkillVm(SkillVmId id)
+		public SkillVmId Id { get; }
+		public Skill Skill { get; }
+
+		public SkillVm(SkillVmId id, Skill skill, ISkillView view)
 		{
 			Id = id;
+			Skill = skill;
+			this.view = view;
+		}
+
+		public void Invoke(ISkillInvoker invoker)
+		{
+			invoker.Invoke(view);
 		}
 	}
 }

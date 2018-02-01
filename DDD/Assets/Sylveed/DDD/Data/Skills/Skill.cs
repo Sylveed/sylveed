@@ -9,11 +9,13 @@ namespace Assets.Sylveed.DDD.Data.Skills
 	{
 		public SkillId Id { get; }
         public string Name { get; }
+		public string ResourceName { get; }
 
-        public Skill(SkillId id, string name)
+		public Skill(SkillId id, string name, string resourceName)
 		{
             Id = id;
             Name = name;
+			ResourceName = resourceName;
 		}
 	}
 }

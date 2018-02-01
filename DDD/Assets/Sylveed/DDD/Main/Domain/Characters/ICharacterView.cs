@@ -13,7 +13,7 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
         float Speed { get; set; }
         void SetDestination(Vector3 direction);
 		void StopMovement();
-        void ShowSkill(Skill skill);
+        void ShowSkill(Skill skill, ISkillTarget[] targets);
         Vector3 Position { get; }
         float Angle { get; }
     }

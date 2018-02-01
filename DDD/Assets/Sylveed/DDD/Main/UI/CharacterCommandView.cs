@@ -36,7 +36,7 @@ namespace Assets.Sylveed.DDD.Main.UI
 
 		protected override void Awake()
 		{
-            ServiceResolver.ResolveMembers(this);
+            ServiceResolver.Resolve(this);
 			ComponentResolver.Resolve(this);
 
 			skillButtonMap.Add(0, skill1Button);

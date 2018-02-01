@@ -23,6 +23,8 @@ namespace Assets.Sylveed.DDD.Main.Domain.Players
 
 		public IEnumerable<IPlayer> Items { get { return storage.Items; } }
 
+		public IEnumerable<IPlayer> CpuPlayers { get { return storage.Items.Where(x => x is CpuPlayer); } }
+
 		public IPlayer Get(PlayerId id)
 		{
 			return storage.Get(id);
