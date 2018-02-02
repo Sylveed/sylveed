@@ -10,6 +10,7 @@ using Assets.Sylveed.DDD.Data.Skills;
 using Assets.Sylveed.DDD.Main.Domain.Characters;
 using Assets.Sylveed.DDD.Main.Application;
 using UnityEngine;
+using Assets.Sylveed.DDD.Main.Implementation.Helpers;
 
 namespace Assets.Sylveed.DDD.Main.Implementation.Skills
 {
@@ -25,9 +26,11 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Skills
 			var prefab = resourceProvider.ResourceSet.Skills.ShootBulletView;
 
 			var skill = skillService.Get(skillId);
-			var view = GameObject.Instantiate(prefab);
+			var view = UnityEngine.Object.Instantiate(prefab);
 
-			return new SkillVm(id, skill, view);
+			var vm = new SkillVm(id, skill, view);
+			ViewInjector.Inject(view, vm);
+			return vm;
 		}
     }
 }

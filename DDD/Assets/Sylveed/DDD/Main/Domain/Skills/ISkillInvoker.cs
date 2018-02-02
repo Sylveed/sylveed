@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Sylveed.DDD.Data.Skills;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,6 @@ namespace Assets.Sylveed.DDD.Main.Domain.Skills
 {
 	public interface ISkillInvoker
 	{
-		void Invoke(ISkillView skillView);
+		void InvokeSkill(SkillVm skill, ISkillView skillView, ISkillTarget[] targets);
 	}
 }

@@ -75,6 +75,11 @@ namespace Assets.Sylveed.ComponentDI
 			GetInjectionInfo<T>().Inject(target);
 		}
 
+		public static void Resolve(Component target)
+		{
+			GetInjectionInfo(target.GetType()).Inject(target);
+		}
+
 		class InjectionInfo
 		{
 			readonly DIProperty[] properties;

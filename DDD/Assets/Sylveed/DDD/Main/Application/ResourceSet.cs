@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Assets.Sylveed.DDD.Main.Implementation.Characters;
-using Assets.Sylveed.DDD.Main.Implementation.Skills.Robots;
+using Assets.Sylveed.DDD.Main.Implementation.SkillDerivations;
 
 namespace Assets.Sylveed.DDD.Main.Application
 {

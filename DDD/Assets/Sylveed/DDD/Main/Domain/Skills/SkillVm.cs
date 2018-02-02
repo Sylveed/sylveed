@@ -20,9 +20,9 @@ namespace Assets.Sylveed.DDD.Main.Domain.Skills
 			this.view = view;
 		}
 
-		public void Invoke(ISkillInvoker invoker)
+		public void Invoke(ISkillInvoker invoker, ISkillTarget[] targets)
 		{
-			invoker.Invoke(view);
+			invoker.InvokeSkill(this, view, targets);
 		}
 	}
 }

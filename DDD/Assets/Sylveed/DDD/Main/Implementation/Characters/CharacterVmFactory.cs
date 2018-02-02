@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 
 using Assets.Sylveed.DDDTools;
+using Assets.Sylveed.ComponentDI.Internal;
 using Assets.Sylveed.DDD.Main.Domain.Characters;
 using Assets.Sylveed.DDD.Main.Domain.Skills;
 using Assets.Sylveed.DDD.Main.Application;
 using Assets.Sylveed.DDD.Data.Characters;
 using Assets.Sylveed.DDD.Data.Skills;
 using Assets.Sylveed.DDD.Main.Domain.Players;
+using Assets.Sylveed.DDD.Main.Implementation.Helpers;
 
 namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 {
@@ -34,7 +36,11 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 
 			var trait = new CharacterVmTrait(id, character, skills, player);
 
-            return new CharacterVm(trait, view);
-        }
+            var viewModel = new CharacterVm(trait, view);
+
+			ViewInjector.Inject(view, viewModel);
+
+			return viewModel;
+		}
     }
 }

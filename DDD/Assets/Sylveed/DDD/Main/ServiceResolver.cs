@@ -67,5 +67,10 @@ namespace Assets.Sylveed.DDD.Main
 			@object = Instance.serviceResolver.Resolve<T>();
 			return @object;
 		}
+
+		public static ObjectResolver GetServiceResolver()
+		{
+			return Instance.serviceResolver;
+		}
 	}
 }

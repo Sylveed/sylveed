@@ -9,11 +9,11 @@ using Assets.Sylveed.DDD.Main.Domain.Skills;
 using Assets.Sylveed.ComponentDI;
 using Assets.Sylveed.DDDTools;
 using Assets.Sylveed.DDD.Data.Skills;
-using Assets.Sylveed.DDD.Main.Implementation.Characters.Helpers;
+using Assets.Sylveed.DDD.Main.Implementation.Helpers;
 
 namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 {
-    public class CharacterView : MonoBehaviour, ICharacterView
+    public class CharacterView : MonoBehaviour, ICharacterView, IInjectComponent
     {
 		[DITypedComponent]
 		readonly CharacterController characterController;
@@ -21,10 +21,12 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 		readonly NavMeshAgent navMeshAgent;
 		[DITypedComponent]
 		readonly ICharacterBody body;
+		[DITypedComponent]
+		readonly ISkillInvoker skillInvoker;
 		[Inject]
 		readonly SkillVmService skillService;
-
-		SkillRouter skillRouter;
+		[Inject]
+		readonly CharacterVm model;
 
 		public float Speed
         {
@@ -42,14 +44,10 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
             get { return transform.localEulerAngles.y; }
         }
 
-		private void Awake()
+		[Inject]
+		void Initialize()
 		{
-			ComponentResolver.Resolve(this);
-			ServiceResolver.Resolve(this);
-
 			navMeshAgent.updateRotation = false;
-
-			skillRouter = new SkillRouter(skillService, body);
 		}
 
 		public void SetDestination(Vector3 destination)
@@ -65,7 +63,8 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 
         public void ShowSkill(Skill skill, ISkillTarget[] targets)
 		{
-			skillRouter.Route(skill.Id, targets);
+			var skillVm = skillService.Create(skill.Id);
+			skillVm.Invoke(skillInvoker, targets);
 
 			Debug.Log("show skill " + skill);
 		}

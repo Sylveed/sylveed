@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace Assets.Sylveed.DDD.Main.Implementation.Characters.Helpers
+namespace Assets.Sylveed.DDD.Main.Implementation.Helpers
 {
     public class SkillMethodAttribute : Attribute
 	{

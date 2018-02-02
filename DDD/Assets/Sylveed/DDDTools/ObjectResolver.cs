@@ -66,7 +66,13 @@ namespace Assets.Sylveed.DDDTools
         {
             map.Add(typeof(T).TypeHandle, @object);
             return this;
-        }
+		}
+
+		public ObjectResolver Register(object @object)
+		{
+			map.Add(@object.GetType().TypeHandle, @object);
+			return this;
+		}
 
 		public ObjectResolver InheritFrom<T>(ObjectResolver parent)
 		{
@@ -76,19 +82,25 @@ namespace Assets.Sylveed.DDDTools
 		public ObjectResolver DependOn(ObjectResolver dependency)
 		{
 			foreach (var x in map.Values)
-				dependency.ResolveMembers(x);
+				dependency.ResolveMembers(x, x.GetType());
 			return this;
 		}
 
-		public T ResolveMembers<T>(T target)
+		public T ResolveMembers<T>(T target, bool callMethod = true)
 		{
-            GetInjectionInfo<T>().Inject(this, target);
+            GetInjectionInfo<T>().Inject(this, target, callMethod);
             return target;
 		}
 
-		public object ResolveMembers(object target)
+		public object ResolveMembers(object target, Type type, bool callMethod = true)
 		{
-			GetInjectionInfo(target.GetType()).Inject(this, target);
+			GetInjectionInfo(type).Inject(this, target, callMethod);
+			return target;
+		}
+
+		public object CallMethods(object target)
+		{
+			GetInjectionInfo(target.GetType()).CallMethods(target);
 			return target;
 		}
 
@@ -102,13 +114,47 @@ namespace Assets.Sylveed.DDDTools
             {
                 throw new ObjectResolverException("object not found.");
             }
-        }
+		}
+
+		public object Resolve(Type type)
+		{
+			try
+			{
+				return map[type.TypeHandle];
+			}
+			catch (KeyNotFoundException)
+			{
+				throw new ObjectResolverException("object not found.");
+			}
+		}
+
+		public bool Contains(Type type)
+		{
+			return map.ContainsKey(type.TypeHandle);
+		}
+
+		public ObjectResolver CloneForType(Type type)
+		{
+			var resolver = new ObjectResolver();
+			var info = GetInjectionInfo(type);
+
+			var types = new HashSet<Type>(info.fields.Select(x => x.FieldType)
+				.Concat(info.properties.Select(x => x.PropertyType)));
+
+			foreach (var t in types)
+			{
+				if (Contains(t))
+					resolver.Register(Resolve(t));
+			}
+
+			return resolver;
+		}
 
         class InjectionInfo
         {
-            readonly FieldInfo[] fields;
-            readonly PropertyInfo[] properties;
-            readonly MethodInfo[] methods;
+            public readonly FieldInfo[] fields;
+			public readonly PropertyInfo[] properties;
+			public readonly MethodInfo[] methods;
 
             public InjectionInfo(FieldInfo[] fields, PropertyInfo[] properties, MethodInfo[] methods)
             {
@@ -117,32 +163,47 @@ namespace Assets.Sylveed.DDDTools
                 this.methods = methods;
             }
 
-            public void Inject<T>(ObjectResolver parent, T target)
+            public void Inject(ObjectResolver parent, object target, bool callMethod)
             {
                 foreach(var x in fields)
                 {
-                    object value;
-                    if (!parent.map.TryGetValue(x.FieldType.TypeHandle, out value))
-                        throw new ObjectResolverException(string.Format("object not found. \nTarget: {0}\nFieldType: {1}\nFieldName: {2}", target, x.FieldType, x.Name));
-
-                    x.SetValue(target, value);
+					try
+					{
+						x.SetValue(target, parent.Resolve(x.FieldType));
+					}
+					catch(ObjectResolverException)
+					{
+						throw new ObjectResolverException(
+							string.Format("object not found. \nTarget: {0}\nFieldType: {1}\nFieldName: {2}", target, x.FieldType, x.Name));
+					}
                 }
 
                 foreach (var x in properties)
-                {
-                    object value;
-                    if (!parent.map.TryGetValue(x.PropertyType.TypeHandle, out value))
+				{
+					try
+					{
+						x.SetValue(target, parent.Resolve(x.PropertyType), null);
+					}
+					catch (ObjectResolverException)
+					{
 						throw new ObjectResolverException(
 							string.Format("object not found.\nTarget: {0}\nPropertyType: {1}\nPropertyName: {2}", target, x.PropertyType, x.Name));
-
-					x.SetValue(target, value, null);
+					}
                 }
 
-                foreach (var x in methods)
-                {
-                    x.Invoke(target, null);
-                }
+				if (callMethod)
+				{
+					CallMethods(target);
+				}
             }
+
+			public void CallMethods(object target)
+			{
+				foreach (var x in methods)
+				{
+					x.Invoke(target, null);
+				}
+			}
         }
 	}
 }
