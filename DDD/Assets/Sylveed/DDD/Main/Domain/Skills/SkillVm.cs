@@ -13,6 +13,11 @@ namespace Assets.Sylveed.DDD.Main.Domain.Skills
 		public SkillVmId Id { get; }
 		public Skill Skill { get; }
 
+		public bool IsDisposed
+		{
+			get { return view == null; }
+		}
+
 		public SkillVm(SkillVmId id, Skill skill, ISkillView view)
 		{
 			Id = id;

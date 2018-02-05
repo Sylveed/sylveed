@@ -53,12 +53,13 @@ namespace Assets.Sylveed.DDD.Main.Implementation.SkillDerivations
 			rigidbody.AddForce(direction.normalized * speed, ForceMode.Impulse);
 		}
 
-		public IObservable<Collision> CollidedWithCharacter
+		public IObservable<ICharacterView> CollidedWithCharacter
 		{
 			get
 			{
 				return this.OnCollisionEnterAsObservable()
-					.Where(x => x.transform.GetComponent<ICharacterView>() != null);
+					.Select(x => x.transform.GetComponent<ICharacterView>())
+					.Where(x => x != null);
 			}
 		}
 	}

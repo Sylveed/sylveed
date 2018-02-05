@@ -25,7 +25,8 @@ namespace Assets.Sylveed.Core.Editor
 				var newContent = XDocument.Parse(content);
 				var ns = newContent.Root.Name.Namespace;
 				newContent.Descendants(ns + "TargetFrameworkVersion").ForEach(x => x.SetValue("v3.5"));
-				
+				newContent.Descendants(ns + "LangVersion").ForEach(x => x.SetValue("6"));
+
 				using (var sw = new Utf8StringWriter())
 				{
 					newContent.Save(sw);

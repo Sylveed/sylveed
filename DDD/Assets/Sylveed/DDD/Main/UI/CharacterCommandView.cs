@@ -9,7 +9,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Assets.Sylveed.DDDTools;
-
+using UniRx;
+using Assets.Sylveed.DDD.Main.Domain.Skills;
 
 namespace Assets.Sylveed.DDD.Main.UI
 {
@@ -47,13 +48,45 @@ namespace Assets.Sylveed.DDD.Main.UI
 			{
 				x.Value.onClick.AddListener(() => UseSkill(x.Key));
 			});
-			foreach (var x in skillButtons)
-				Debug.Log(x);
+
+			Observable.EveryUpdate()
+				.Select(_ =>
+				{
+					if (Input.GetKeyDown(KeyCode.Z))
+						return 0;
+					if (Input.GetKeyDown(KeyCode.X))
+						return 1;
+					if (Input.GetKeyDown(KeyCode.C))
+						return 2;
+					return -1;
+				})
+				.Where(x => x >= 0)
+				.Subscribe(skillIndex =>
+				{
+					UseSkill(skillIndex);
+				})
+				.AddTo(this);
 		}
 
 		void UseSkill(int index)
 		{
-			Player.UseSkill(index);
+			var playerDir = Quaternion.AngleAxis(Player.Angle, Vector3.up) * Vector3.forward;
+
+			var targetCharacter = characterService.Items
+				.Where(x => x != Player)
+				.OrderBy(x => Vector3.Angle((x.Position - Player.Position).normalized, playerDir))
+				.FirstOrDefault();
+
+			if (targetCharacter == null)
+			{
+				Player.UseSkill(index, SkillTarget.Create(targetCharacter.Position));
+			}
+			else
+			{
+				Debug.Log($"{Player.Position}, {targetCharacter.Position}");
+				Debug.Log((targetCharacter.Position - Player.Position).normalized);
+				Player.UseSkill(index);
+			}
 		}
 	}
 }

@@ -10,6 +10,6 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 {
     public interface ICharacterBody
 	{
-
+		bool CanControl { get; }
     }
 }

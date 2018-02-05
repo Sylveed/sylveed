@@ -19,5 +19,13 @@ namespace Assets.Sylveed.DDD.Main.Domain.Skills
 		{
 			return factory.Create(skillId, new SkillVmId());
 		}
+
+		public void Trim()
+		{
+			foreach (var e in storage.Items.Where(x => x.IsDisposed).ToArray())
+			{
+				storage.Remove(e.Id);
+			}
+		}
 	}
 }

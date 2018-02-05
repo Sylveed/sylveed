@@ -21,6 +21,10 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 
 		public float Angle { get { return view.Angle; } }
 
+		public bool IsDisposed => view == null;
+
+		public bool CanControl => view.CanControl;
+
 		public CharacterVm(CharacterVmTrait trait, ICharacterView view)
 		{
             this.trait = trait;
@@ -29,6 +33,8 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 
 		public void UseSkill(int index, params ISkillTarget[] targets)
 		{
+			if (!CanControl) return;
+
 			var skill = trait.Skills.ElementAt(index);
 
 			view.ShowSkill(skill, targets);
@@ -36,12 +42,16 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 
 		public void SetDestinationDirection(Vector3 direction, float speedRatio)
 		{
-            view.Speed = 10 * speedRatio;
+			if (!CanControl) return;
+
+			view.Speed = 10 * speedRatio;
             view.SetDestination(view.Position + direction * 2);
 		}
 
 		public void StopMovement()
 		{
+			if (!CanControl) return;
+
 			view.StopMovement();
 		}
 	}

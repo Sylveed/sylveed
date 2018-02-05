@@ -16,5 +16,7 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
         void ShowSkill(Skill skill, ISkillTarget[] targets);
         Vector3 Position { get; }
         float Angle { get; }
+		CharacterVm Model { get; }
+		bool CanControl { get; }
     }
 }

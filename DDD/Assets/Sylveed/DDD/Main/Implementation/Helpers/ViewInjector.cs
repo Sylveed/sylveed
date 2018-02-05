@@ -18,8 +18,6 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Helpers
 
 			foreach (var x in targets)
 			{
-				var sw = new System.Diagnostics.Stopwatch();
-				sw.Start();
 				var resolver = ServiceResolver.GetServiceResolver()
 					.CloneForType(x.GetType());
 
@@ -27,7 +25,7 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Helpers
 					resolver.Register(opt);
 
 				resolver.ResolveMembers(x, x.GetType(), false);
-				Debug.Log("resolve ms: " + sw.ElapsedMilliseconds);
+
 				ComponentResolver.Resolve(x);
 
 				resolver.CallMethods(x);

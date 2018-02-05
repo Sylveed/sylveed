@@ -17,6 +17,8 @@ namespace Assets.Sylveed.DDD.Main.Domain.Characters
 		[Inject]
 		readonly PlayerStorage playerStorage;
 
+		public IEnumerable<CharacterVm> Items => storage.Items;
+
 		public CharacterVm Create(IPlayer player)
 		{
 			return storage.Add(factory.Create(new CharacterVmId(), player));

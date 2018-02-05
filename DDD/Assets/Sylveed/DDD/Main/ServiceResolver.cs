@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UniRx;
 using Assets.Sylveed.DDD.Application;
 using Assets.Sylveed.DDD.Data;
 using Assets.Sylveed.DDD.Data.Items;
@@ -49,7 +50,9 @@ namespace Assets.Sylveed.DDD.Main
                 .Register(new CharacterVmService())
 				.Register(new PlayerService())
 				.DependOn(inner);
-        }
+
+			serviceResolver.ResolveMembers(new PeriodicModelDeleter().AddTo(this));
+		}
 
         public static T Resolve<T>(T target)
         {
@@ -71,6 +74,30 @@ namespace Assets.Sylveed.DDD.Main
 		public static ObjectResolver GetServiceResolver()
 		{
 			return Instance.serviceResolver;
+		}
+
+		class PeriodicModelDeleter : IDisposable
+		{
+			readonly CompositeDisposable disposables = new CompositeDisposable();
+
+			[Inject]
+			SkillVmService skillService;
+
+			[Inject]
+			void Initialize()
+			{
+				Observable.EveryUpdate()
+					.Subscribe(_ =>
+					{
+						skillService.Trim();
+					})
+					.AddTo(disposables);
+			}
+
+			public void Dispose()
+			{
+				disposables.Dispose();
+			}
 		}
 	}
 }

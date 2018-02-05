@@ -28,6 +28,8 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 		[Inject]
 		readonly CharacterVm model;
 
+		public CharacterVm Model { get { return model; } }
+
 		public float Speed
         {
             get { return navMeshAgent.speed; }
@@ -42,7 +44,9 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
         public float Angle
         {
             get { return transform.localEulerAngles.y; }
-        }
+		}
+
+		public bool CanControl => body.CanControl;
 
 		[Inject]
 		void Initialize()
