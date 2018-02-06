@@ -26,8 +26,13 @@ namespace Assets.Sylveed.DDD.Data.Characters
 
 		public IEnumerable<SkillId> GetSkillIds(CharacterId id)
 		{
-			return skillStorage.CharacterIdIndex.Get(id)
-				.Select(x => x.SkillId);
+			if (skillStorage.CharacterIdIndex.Contains(id))
+			{
+				return skillStorage.CharacterIdIndex.Get(id)
+					.Select(x => x.SkillId);
+			}
+
+			return Enumerable.Empty<SkillId>();
 		}
 	}
 }

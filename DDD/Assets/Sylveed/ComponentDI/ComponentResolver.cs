@@ -11,11 +11,11 @@ namespace Assets.Sylveed.ComponentDI
 
 	public static class ComponentResolver
 	{
-		static readonly Dictionary<RuntimeTypeHandle, InjectionInfo> s_injectionMap = new Dictionary<RuntimeTypeHandle, InjectionInfo>();
+		static readonly Dictionary<RuntimeTypeHandle, IInjectionInfo> s_injectionMap = new Dictionary<RuntimeTypeHandle, IInjectionInfo>();
 
-		static InjectionInfo GetInjectionInfo(Type targetType)
+		static IInjectionInfo GetInjectionInfo(Type targetType)
 		{
-			InjectionInfo info;
+			IInjectionInfo info;
 			if (s_injectionMap.TryGetValue(targetType.TypeHandle, out info))
 				return info;
 
@@ -28,10 +28,10 @@ namespace Assets.Sylveed.ComponentDI
 
 		static class InjectionInfoCache<T>
 		{
-			public static InjectionInfo cache;
+			public static IInjectionInfo cache;
 		}
 
-		static InjectionInfo GetInjectionInfo<T>()
+		static IInjectionInfo GetInjectionInfo<T>()
 		{
 			var info = InjectionInfoCache<T>.cache;
 
@@ -45,7 +45,7 @@ namespace Assets.Sylveed.ComponentDI
 			return info;
 		}
 
-		static InjectionInfo CreateInjectionInfo(Type targetType)
+		static IInjectionInfo CreateInjectionInfo(Type targetType)
 		{
 			var properties = targetType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 				.Select(x =>
@@ -67,7 +67,11 @@ namespace Assets.Sylveed.ComponentDI
 				.Where(x => x != null)
 				.ToArray();
 
-			return new InjectionInfo(properties);
+			var info = new InjectionInfo(properties);
+			if (targetType.BaseType == null)
+				return info;
+			else
+				return new MultipleInjectionInfo(GetInjectionInfo(targetType.BaseType), info);
 		}
 
 		public static void Resolve<T>(T target) where T : Component
@@ -79,8 +83,30 @@ namespace Assets.Sylveed.ComponentDI
 		{
 			GetInjectionInfo(target.GetType()).Inject(target);
 		}
+		
+		interface IInjectionInfo
+		{
+			void Inject<T>(T target) where T : Component;
+		}
 
-		class InjectionInfo
+
+		class MultipleInjectionInfo : IInjectionInfo
+		{
+			readonly IEnumerable<IInjectionInfo> source;
+
+			public MultipleInjectionInfo(IInjectionInfo baseInfo, IInjectionInfo info)
+			{
+				source = new []{ baseInfo, info };
+			}
+
+			public void Inject<T>(T target) where T : Component
+			{
+				foreach (var x in source)
+					x.Inject(target);
+			}
+		}
+
+		class InjectionInfo : IInjectionInfo
 		{
 			readonly DIProperty[] properties;
 

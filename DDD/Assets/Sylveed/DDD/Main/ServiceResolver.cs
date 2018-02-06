@@ -28,7 +28,7 @@ namespace Assets.Sylveed.DDD.Main
         {
 			var globalServiceResolver = GlobalServiceResolver.GetServiceResolver();
 
-            var baseResolver = new ObjectResolver()
+			var baseResolver = new ObjectResolver()
                 .InheritFrom<SkillService>(globalServiceResolver)
 				.InheritFrom<ItemService>(globalServiceResolver)
 				.InheritFrom<CharacterService>(globalServiceResolver)
@@ -52,6 +52,8 @@ namespace Assets.Sylveed.DDD.Main
 				.DependOn(inner);
 
 			serviceResolver.ResolveMembers(new PeriodicModelDeleter().AddTo(this));
+
+			globalServiceResolver.ResolveMembers(new DataTypeValidator()).Validate();
 		}
 
         public static T Resolve<T>(T target)

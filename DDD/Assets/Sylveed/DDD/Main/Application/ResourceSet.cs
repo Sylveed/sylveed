@@ -11,11 +11,11 @@ namespace Assets.Sylveed.DDD.Main.Application
     public class ResourceSet : ScriptableObject
     {
         [SerializeField]
-        CharacterView personView;
+        RobotView personView;
 		[SerializeField]
 		SkillSet skills;
 
-		public CharacterView PersonView => personView;
+		public RobotView PersonView => personView;
 
 		public SkillSet Skills => skills;
 

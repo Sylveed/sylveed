@@ -9,11 +9,11 @@ namespace Assets.Sylveed.DDDTools
 {
 	public class ObjectResolver
     {
-        static readonly Dictionary<RuntimeTypeHandle, InjectionInfo> s_injectionMap = new Dictionary<RuntimeTypeHandle, InjectionInfo>();
+        static readonly Dictionary<RuntimeTypeHandle, IInjectionInfo> s_injectionMap = new Dictionary<RuntimeTypeHandle, IInjectionInfo>();
 
-        static InjectionInfo GetInjectionInfo(Type targetType)
+        static IInjectionInfo GetInjectionInfo(Type targetType)
         {
-            InjectionInfo info;
+			IInjectionInfo info;
             if (s_injectionMap.TryGetValue(targetType.TypeHandle, out info))
                 return info;
 
@@ -26,10 +26,10 @@ namespace Assets.Sylveed.DDDTools
 
 		static class InjectionInfoCache<T>
 		{
-			public static InjectionInfo cache;
+			public static IInjectionInfo cache;
 		}
 
-		static InjectionInfo GetInjectionInfo<T>()
+		static IInjectionInfo GetInjectionInfo<T>()
 		{
 			var info = InjectionInfoCache<T>.cache;
 
@@ -43,21 +43,30 @@ namespace Assets.Sylveed.DDDTools
 			return info;
 		}
 
-		static InjectionInfo CreateInjectionInfo(Type targetType)
+		static IInjectionInfo CreateInjectionInfo(Type targetType)
 		{
-			var injectFields = targetType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+			var injectFields = targetType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
 				.Where(x => x.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0)
 				.ToArray();
 
-			var injectProperties = targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+			var injectProperties = targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
 				.Where(x => x.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0)
 				.ToArray();
 
-			var injectMethods = targetType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+			var injectMethods = targetType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
 				.Where(x => x.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0)
 				.ToArray();
 
-			return new InjectionInfo(injectFields, injectProperties, injectMethods);
+			var info = new SingleInjectionInfo(injectFields, injectProperties, injectMethods);
+
+			if (targetType.BaseType == null)
+			{
+				return info;
+			}
+			else
+			{
+				return new MultipleInjectionInfo(GetInjectionInfo(targetType.BaseType), info);
+			}
 		}
 
 		readonly Dictionary<RuntimeTypeHandle, object> map = new Dictionary<RuntimeTypeHandle, object>();
@@ -137,11 +146,8 @@ namespace Assets.Sylveed.DDDTools
 		{
 			var resolver = new ObjectResolver();
 			var info = GetInjectionInfo(type);
-
-			var types = new HashSet<Type>(info.fields.Select(x => x.FieldType)
-				.Concat(info.properties.Select(x => x.PropertyType)));
-
-			foreach (var t in types)
+			
+			foreach (var t in info.Types)
 			{
 				if (Contains(t))
 					resolver.Register(Resolve(t));
@@ -150,13 +156,57 @@ namespace Assets.Sylveed.DDDTools
 			return resolver;
 		}
 
-        class InjectionInfo
-        {
-            public readonly FieldInfo[] fields;
-			public readonly PropertyInfo[] properties;
-			public readonly MethodInfo[] methods;
+		interface IInjectionInfo
+		{
+			IEnumerable<Type> Types { get; }
+			void Inject(ObjectResolver parent, object target, bool callMethod);
+			void CallMethods(object target);
+		}
 
-            public InjectionInfo(FieldInfo[] fields, PropertyInfo[] properties, MethodInfo[] methods)
+		class MultipleInjectionInfo : IInjectionInfo
+		{
+			readonly IEnumerable<IInjectionInfo> source;
+
+			public IEnumerable<Type> Types
+			{
+				get
+				{
+					foreach (var x in source)
+						foreach (var t in x.Types)
+							yield return t;
+				}
+			}
+
+			public MultipleInjectionInfo(IInjectionInfo baseInfo, IInjectionInfo info)
+			{
+				this.source = new[] { baseInfo, info };
+			}
+
+			public void Inject(ObjectResolver parent, object target, bool callMethod)
+			{
+				foreach (var x in source)
+					x.Inject(parent, target, callMethod);
+			}
+
+			public void CallMethods(object target)
+			{
+				foreach (var x in source)
+					x.CallMethods(target);
+			}
+		}
+
+		class SingleInjectionInfo : IInjectionInfo
+		{
+			readonly FieldInfo[] fields;
+			readonly PropertyInfo[] properties;
+			readonly MethodInfo[] methods;
+
+			public IEnumerable<Type> Types
+			{
+				get { return fields.Select(x => x.FieldType).Concat(properties.Select(x => x.PropertyType)); }
+			}
+
+            public SingleInjectionInfo(FieldInfo[] fields, PropertyInfo[] properties, MethodInfo[] methods)
             {
                 this.fields = fields;
                 this.properties = properties;

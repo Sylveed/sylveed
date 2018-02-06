@@ -10,25 +10,32 @@ using Assets.Sylveed.ComponentDI;
 using Assets.Sylveed.DDDTools;
 using Assets.Sylveed.DDD.Data.Skills;
 using Assets.Sylveed.DDD.Main.Implementation.Helpers;
+using Assets.Sylveed.DDD.Main.Implementation.SkillDerivations;
+using UniRx;
 
 namespace Assets.Sylveed.DDD.Main.Implementation.Characters
 {
-    public class CharacterView : MonoBehaviour, ICharacterView, IInjectComponent
-    {
+	public abstract class SimpleCharacterViewBase<T> : MonoBehaviour, ICharacterView, IInjectComponent, ISkillInvoker
+		where T : SimpleCharacterViewBase<T>
+	{
 		[DITypedComponent]
 		readonly CharacterController characterController;
 		[DITypedComponent]
 		readonly NavMeshAgent navMeshAgent;
-		[DITypedComponent]
-		readonly ICharacterBody body;
-		[DITypedComponent]
-		readonly ISkillInvoker skillInvoker;
 		[Inject]
 		readonly SkillVmService skillService;
 		[Inject]
 		readonly CharacterVm model;
 
-		public CharacterVm Model { get { return model; } }
+		protected CharacterController CharacterController => characterController;
+
+		protected NavMeshAgent NavMeshAgent => navMeshAgent;
+
+		protected SkillVmService SkillService => skillService;
+
+		public CharacterVm Model => model;
+
+		public bool CanControl { get; protected set; }
 
 		public float Speed
         {
@@ -46,12 +53,19 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
             get { return transform.localEulerAngles.y; }
 		}
 
-		public bool CanControl => body.CanControl;
-
 		[Inject]
 		void Initialize()
 		{
 			navMeshAgent.updateRotation = false;
+			CanControl = true;
+		}
+
+		public void InvokeSkill(SkillVm skill, ISkillView skillView, ISkillTarget[] targets)
+		{
+			if (!CanControl)
+				throw new InvalidOperationException();
+
+			SkillRouter.Route((T)this, skill, skillView, targets);
 		}
 
 		public void SetDestination(Vector3 destination)
@@ -68,9 +82,9 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Characters
         public void ShowSkill(Skill skill, ISkillTarget[] targets)
 		{
 			var skillVm = skillService.Create(skill.Id);
-			skillVm.Invoke(skillInvoker, targets);
+			skillVm.Invoke(this, targets);
 
 			Debug.Log("show skill " + skill);
 		}
-    }
+	}
 }

@@ -21,6 +21,46 @@ namespace Assets.Sylveed.DDD.Main.Implementation.Helpers
 			method.Invoke(invoker, skill, view, targets);
 		}
 
+		public static void Route(Type invokerType, object invoker, SkillVm skill, ISkillView view, ISkillTarget[] targets)
+		{
+			var method = MethodMap.GetMethod(invokerType, view.GetType());
+			method.Invoke(invoker, skill, view, targets);
+		}
+
+		public static void Validate(Type invokerType, Type skillViewType)
+		{
+			MethodMap.GetMethod(invokerType, skillViewType);
+		}
+
+		static class MethodMap
+		{
+			static readonly Dictionary<RuntimeTypeHandle, Dictionary<RuntimeTypeHandle, Method>> methods =
+				new Dictionary<RuntimeTypeHandle, Dictionary<RuntimeTypeHandle, Method>>();
+			
+			public static Method GetMethod(Type invokerType, Type key)
+			{
+				Dictionary<RuntimeTypeHandle, Method> map;
+				if (!methods.TryGetValue(invokerType.TypeHandle, out map))
+				{
+					map = invokerType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+						.Where(x => x.GetCustomAttributes(typeof(SkillMethodAttribute), true).Length > 0)
+						.Select(x => new Method(x))
+						.ToDictionary(x => x.KeyType.TypeHandle);
+
+					methods.Add(invokerType.TypeHandle, map);
+				}
+
+				try
+				{
+					return map[key.TypeHandle];
+				}
+				catch (KeyNotFoundException)
+				{
+					throw new InvalidOperationException("method not found.");
+				}
+			}
+		}
+
 		static class MethodMap<T>
 		{
 			static readonly Dictionary<RuntimeTypeHandle, Method> methods;

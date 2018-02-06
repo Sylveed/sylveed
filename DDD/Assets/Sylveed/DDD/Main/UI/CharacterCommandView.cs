@@ -77,14 +77,12 @@ namespace Assets.Sylveed.DDD.Main.UI
 				.OrderBy(x => Vector3.Angle((x.Position - Player.Position).normalized, playerDir))
 				.FirstOrDefault();
 
-			if (targetCharacter == null)
+			if (targetCharacter != null)
 			{
 				Player.UseSkill(index, SkillTarget.Create(targetCharacter.Position));
 			}
 			else
 			{
-				Debug.Log($"{Player.Position}, {targetCharacter.Position}");
-				Debug.Log((targetCharacter.Position - Player.Position).normalized);
 				Player.UseSkill(index);
 			}
 		}
