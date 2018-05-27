@@ -1,0 +1,183 @@
+
+
+--Ver1.
+
+#Core
+	-Energy
+	-Element
+	-Gender
+	-Level
+	-ExperiencePoint
+	-Age
+	-Name
+	-CharacterRank
+	-Probability
+	-Force
+	
+#Domain
+	#Characters	
+		-Character
+		-CharacterAbility
+		-CharacterId
+		-ICharacterRepository
+		
+	#Skills	
+		-Skill
+		-SkillId
+		-ISkillRepository
+		
+	#Avatars
+		-Avatar
+		-AvatarAbility
+		-AvatarId
+		-IAvatarRepository
+		
+	#Allies
+		-AllyId
+		-Ally
+		-IAllyRepository
+		
+	#Enemies
+		-EnemyId
+		-Enemy
+		-IEnemyRepository
+		
+	#Areas
+		-AreaId
+		-Area
+		-AreaFactory
+		-Difficulty
+	
+	#Spots
+		-SpotId
+		-Spot
+		-SpotFactory
+		-ISpotRepository
+		
+	#SpotEvents
+		-SpotEventId
+		-SpotEventDistribution
+		-SpotEventType
+	
+	#SpotBattleEvents
+		-BattleEvent
+		-EnemyDistribution
+
+	#SpotStoryEvents
+		-StoryEvent
+		
+	#Adventures
+		-Adventure
+		-AdventureFactory
+		-AdventureService
+		-RandomEventFactory
+		-RandomEvent
+		-IAdventureEventFlow
+		
+	#Battles
+		-DamageCalculateService
+		-TurnScheduleService
+		-Battle
+		-BattleId
+		-BattlerId
+		-EnemyBattler
+		-EnemyBattlerFactory
+		-AllyBattler
+		-AllyBattlerFactory
+		-IBattleRepository
+		-BattleFactory
+		
+#Application
+	#Menu
+		-AvatarStatusModel
+		-AvatarAbilityModel
+		-AvatarModel
+		-AvatarUseCase
+		
+	#Adventures
+		-AvatarModel
+		-AdventureEventModel
+		-AvatarUseCase
+	
+	#Battles
+		-AllyBattlerModel
+		-EnemyBattlerModel
+		-BattleFlowUseCase
+		-OffenceAndDefenceUseCase
+		
+	#WorldMaps
+	
+	#System
+		-DialogMessageId
+		-LogMessageId
+		-IDialogService
+		-ILoggerFactory
+		-ILogger<T>
+		
+#Presentation
+	#Core
+		-PresentationStringId
+		
+	#Menus
+		-StatusPresenter
+		
+		-ResourceManager
+		
+	#Adventures
+		-BattleSightPresenter
+		-AvatarPresenter
+			
+		-ActorStatusPresenter
+		-CommandPresenter
+		-MenuPresenter
+		-~SkillPresenter
+		-~EffectPresenter
+		
+		-ResourceManager
+		
+	#WorldMaps
+		-MapPresenter
+		-SpotPresenter
+
+		-ResourceManager
+		
+#Infrastructure
+	#Repositories
+		-CharacterRepository
+		-AllyRepository
+		-EnemyRepository
+		-StageRepository
+		
+		-ResourceRepository
+		-ApplicationStringRepository
+		
+	#Presentation
+		-DialogService
+	
+	#Data
+	
+	#Resourcing
+		-ResourceLoader
+==============================
+
+Domain
+
+
+Application
+
+
+Presentation
+	-Menu
+		-Equipment
+		-Status
+		-Skill
+		
+	-Quest
+		-Battle
+		-Events
+		-MiniMap
+		
+	-WorldMap
+	
+	-Story
+	
