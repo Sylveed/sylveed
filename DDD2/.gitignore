@@ -1,0 +1,8 @@
+/Library
+
+/Temp
+/.vs
+/*.csproj
+/*.sln
+/*.user
+/Ignored
