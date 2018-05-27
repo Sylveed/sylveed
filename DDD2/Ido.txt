@@ -67,6 +67,7 @@
 		-StoryEvent
 		
 	#Adventures
+		-AdventrueId
 		-Adventure
 		-AdventureFactory
 		-AdventureService
@@ -86,8 +87,16 @@
 		-AllyBattlerFactory
 		-IBattleRepository
 		-BattleFactory
-		
+	
 #Application
+	#System
+		-DialogMessageId
+		-LogMessageId
+		-IDialogService
+		-ILoggerFactory
+		-ILogger<T>
+		
+#UseCases
 	#Menu
 		-AvatarStatusModel
 		-AvatarAbilityModel
@@ -96,24 +105,19 @@
 		
 	#Adventures
 		-AvatarModel
-		-AdventureEventModel
+		-AdventureModel
 		-AvatarUseCase
+		-AdventureUseCase
 	
 	#Battles
 		-AllyBattlerModel
 		-EnemyBattlerModel
-		-BattleFlowUseCase
+		-BattleModel
+		-BattleUseCase
 		-OffenceAndDefenceUseCase
 		
 	#WorldMaps
-	
-	#System
-		-DialogMessageId
-		-LogMessageId
-		-IDialogService
-		-ILoggerFactory
-		-ILogger<T>
-		
+
 #Presentation
 	#Core
 		-PresentationStringId
