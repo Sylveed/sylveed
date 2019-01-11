@@ -6,6 +6,5 @@ namespace Sylveed.SampleApp.Sample.Application.Devices
     {
         void UpdateName(DeviceId id, string newName);
         void UpdateActive(DeviceId id, bool isActive);
-        void Reset(DeviceId id);
     }
 }

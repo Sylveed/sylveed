@@ -3,7 +3,7 @@ using Sylveed.SampleApp.Sample.Domain.Devices;
 
 namespace Sylveed.SampleApp.Sample.UseCase.Monitors
 {
-    public class FocusDevice
+    public class FocusObject
     {
         readonly IDeviceRepository deviceRepository;
         readonly IFocusPresenter focusPresenter;
@@ -18,7 +18,7 @@ namespace Sylveed.SampleApp.Sample.UseCase.Monitors
             navigator.ShowDeviceProperty(device);
         }
 
-        public void KillFocus(DeviceId id)
+        public void KillFocus()
         {
             focusPresenter.KillFocus();
 

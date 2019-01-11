@@ -2,10 +2,8 @@
 {
     public interface IDeviceView
     {
-        string Id { get; }
-
         void UpdateName(string name);
         void UpdateActive(bool active);
-        void ResetStatus();
+        void Focus();
     }
 }

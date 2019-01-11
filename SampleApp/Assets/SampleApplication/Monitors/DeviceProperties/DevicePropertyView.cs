@@ -1,11 +1,12 @@
 ﻿using Sylveed.SampleApp.Sample.Presentation.Devices;
+using Sylveed.SampleApp.Sample.Presentation.Monitors;
 using Sylveed.SampleApp.SampleApplication.Helpers;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Sylveed.SampleApp.SampleApplication.Monitors.DeviceProperties
 {
-    public class DevicePropertyView : ViewBase
+    public class DevicePropertyView : ViewBase, IDevicePropertyView
     {
         readonly DevicePropertyController controller;
 
@@ -20,9 +21,28 @@ namespace Sylveed.SampleApp.SampleApplication.Monitors.DeviceProperties
 
         string deviceId;
 
-        public void Initialize(string deviceId)
+        public bool Visible => gameObject.activeSelf;
+
+        public void Show(string deviceId)
         {
             this.deviceId = deviceId;
+
+            gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public void UpdateActive(bool value)
+        {
+            isActive.isOn = value;
+        }
+
+        public void UpdateName(string value)
+        {
+            deviceName.text = value;
         }
 
         protected override void OnAwaked()
