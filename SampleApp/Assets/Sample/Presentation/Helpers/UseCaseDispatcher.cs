@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Sylveed.SampleApp.Sample.Presentation.Helpers
 {
-    public static class UseCaseDispatcher
+    internal static class UseCaseDispatcher
     {
         public static void Dispatch<TUseCase>(Action<TUseCase> action)
         {
