@@ -8,7 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>Sylveed.SampleApp</RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{9A24D6BA-6BA4-B6F0-BA63-5689B707257C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -60,30 +60,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Application\ActorAppService.cs" />
-    <Compile Include="Assets\Application\ActorDto.cs" />
-    <Compile Include="Assets\Domain.Common\DomainEventPublisher.cs" />
-    <Compile Include="Assets\Domain.Common\IRepositoryAdded.cs" />
-    <Compile Include="Assets\Domain.Common\IRepositoryRemoved.cs" />
-    <Compile Include="Assets\Domain\Actor.cs" />
-    <Compile Include="Assets\Domain\ActorId.cs" />
-    <Compile Include="Assets\Domain\ActorProfile.cs" />
-    <Compile Include="Assets\Domain\CharacterAbility.cs" />
-    <Compile Include="Assets\Domain\DamageCalculateService.cs" />
-    <Compile Include="Assets\Domain\Element.cs" />
-    <Compile Include="Assets\Domain\Force.cs" />
-    <Compile Include="Assets\Domain\IActorFactory.cs" />
-    <Compile Include="Assets\Domain\IActorRepository.cs" />
-    <Compile Include="Assets\Domain\PowerUnit.cs" />
-    <Compile Include="Assets\Domain\Skill.cs" />
-    <Compile Include="Assets\Domain\SkillId.cs" />
-    <Compile Include="Assets\Domain\SkillSet.cs" />
-    <Compile Include="Assets\ResolveAttribute.cs" />
-    <Compile Include="Assets\SampleApplication\Monitors\DeviceProperties\DevicePropertyView.cs" />
-    <Compile Include="Assets\SampleApplication\Monitors\Devices\DeviceView.cs" />
-    <Compile Include="Assets\SampleApplication\Helpers\Injector.cs" />
-    <Compile Include="Assets\SampleApplication\Helpers\ViewBase.cs" />
-    <Compile Include="Assets\SampleApplication\Monitors\Flows\MonitorViewHolder.cs" />
+    <Compile Include="Assets\Sample\Application\Devices\IDevicePropertyPresenter.cs" />
+    <Compile Include="Assets\Sample\Application\Devices\IDeviceTransactionScope.cs" />
+    <Compile Include="Assets\Sample\Application\Devices\IDeviceTransactionService.cs" />
     <Compile Include="Assets\Sample\Application\Dialogs\IDialogPresenter.cs" />
     <Compile Include="Assets\Sample\Application\Monitors\IFocusPresenter.cs" />
     <Compile Include="Assets\Sample\Application\Monitors\IMonitorNavigator.cs" />
@@ -105,6 +84,7 @@
     <Compile Include="Assets\Sample\Infrastructure\Devices\DeviceFactory.cs" />
     <Compile Include="Assets\Sample\Infrastructure\Devices\DeviceLockService.cs" />
     <Compile Include="Assets\Sample\Infrastructure\Devices\DeviceRepository.cs" />
+    <Compile Include="Assets\Sample\Infrastructure\Devices\DeviceTransactionService.cs" />
     <Compile Include="Assets\Sample\Library\AsDevices\AsDevice.cs" />
     <Compile Include="Assets\Sample\Library\AsDevices\AsDeviceManager.cs" />
     <Compile Include="Assets\Sample\Library\AsDevices\AsDeviceStatus.cs" />
@@ -113,12 +93,13 @@
     <Compile Include="Assets\Sample\Library\MkDevices\MkDeviceManager.cs" />
     <Compile Include="Assets\Sample\Library\MkDevices\PropertyKeys.cs" />
     <Compile Include="Assets\Sample\Library\SampleFramework\IContainer.cs" />
-    <Compile Include="Assets\Sample\Presentation\Devices\IDeviceView.cs" />
-    <Compile Include="Assets\Sample\Presentation\Devices\DeviceViewRepository.cs" />
-    <Compile Include="Assets\Sample\Presentation\Monitors\DevicePropertyPresenter.cs" />
     <Compile Include="Assets\Sample\Presentation\Devices\DevicePropertyController.cs" />
+    <Compile Include="Assets\Sample\Presentation\Devices\DeviceViewRepository.cs" />
+    <Compile Include="Assets\Sample\Presentation\Devices\IDeviceView.cs" />
     <Compile Include="Assets\Sample\Presentation\Helpers\ThreadDispatcher.cs" />
     <Compile Include="Assets\Sample\Presentation\Helpers\UseCaseDispatcher.cs" />
+    <Compile Include="Assets\Sample\Presentation\Monitors\DevicePropertyController.cs" />
+    <Compile Include="Assets\Sample\Presentation\Monitors\DevicePropertyPresenter.cs" />
     <Compile Include="Assets\Sample\Presentation\Monitors\FocusPresenter.cs" />
     <Compile Include="Assets\Sample\Presentation\Monitors\FocusRepository.cs" />
     <Compile Include="Assets\Sample\Presentation\Monitors\IDevicePropertyView.cs" />
@@ -129,15 +110,14 @@
     <Compile Include="Assets\Sample\UseCase\CommandHandlings\IDeviceActionPresenter.cs" />
     <Compile Include="Assets\Sample\UseCase\CommandHandlings\InputDeviceCommand.cs" />
     <Compile Include="Assets\Sample\UseCase\DeviceControls\ChangeDeviceProperty.cs" />
-    <Compile Include="Assets\Sample\Infrastructure\Devices\DeviceTransactionService.cs" />
-    <Compile Include="Assets\Sample\Application\Devices\IDevicePropertyPresenter.cs" />
     <Compile Include="Assets\Sample\UseCase\DeviceControls\InitializeDevice.cs" />
-    <Compile Include="Assets\Sample\UseCase\Monitors\FocusObject.cs" />
     <Compile Include="Assets\Sample\UseCase\DeviceSynchronizations\SyncWithRemoteDeviceInformation.cs" />
-    <Compile Include="Assets\Sample\Application\Devices\IDeviceTransactionScope.cs" />
-    <Compile Include="Assets\Sample\Application\Devices\IDeviceTransactionService.cs" />
-    <Compile Include="Assets\UseCase\Modules.cs" />
-    <Compile Include="Assets\UseCase\MoveJoint.cs" />
+    <Compile Include="Assets\Sample\UseCase\Monitors\FocusObject.cs" />
+    <Compile Include="Assets\SampleApplication\Helpers\Injector.cs" />
+    <Compile Include="Assets\SampleApplication\Helpers\ViewBase.cs" />
+    <Compile Include="Assets\SampleApplication\Monitors\DeviceProperties\DevicePropertyView.cs" />
+    <Compile Include="Assets\SampleApplication\Monitors\Devices\DeviceView.cs" />
+    <Compile Include="Assets\SampleApplication\Monitors\Flows\MonitorViewHolder.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/SamaaProjects/Sylveed/SampleApp/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
@@ -729,7 +709,6 @@
       <Name>UniRx.Async.Editor</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
